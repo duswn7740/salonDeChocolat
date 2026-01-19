@@ -11,18 +11,29 @@ function Inventory() {
     // 아이템 추가
     const handleAddItem = (event) => {
       const { id, name, image } = event.detail;
-      setItems(prev => [...prev, { id, name, image }]);
+      setItems(prev => {
+        const newItems = [...prev, { id, name, image }];
+        window.gameInventory = newItems; // Phaser에서 접근 가능하도록
+        return newItems;
+      });
     };
 
     // 아이템 제거
     const handleRemoveItem = (event) => {
       const { id } = event.detail;
-      setItems(prev => prev.filter(item => item.id !== id));
+      setItems(prev => {
+        const newItems = prev.filter(item => item.id !== id);
+        window.gameInventory = newItems; // Phaser에서 접근 가능하도록
+        return newItems;
+      });
       // 선택된 아이템이 제거되면 선택 해제
       if (selectedItem === id) {
         setSelectedItem(null);
       }
     };
+
+    // 초기화
+    window.gameInventory = items;
 
     window.addEventListener('addItem', handleAddItem);
     window.addEventListener('removeItem', handleRemoveItem);

@@ -25,10 +25,10 @@ const config = {
   
   // 씬 목록 (순서대로 실행, 첫 번째가 시작 씬)
   scene: [
+    PathScene,
     TitleScene,
     PrologueScene,
     PopupScene,
-    PathScene,
     // BarnScene,
     // ForestScene,
     // CabinScene,
