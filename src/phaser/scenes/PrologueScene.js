@@ -133,7 +133,7 @@ export default class PrologueScene extends Phaser.Scene {
       50,
       50,
       0xff0000,
-      0.5
+      0
     );
     bonbonArea.setInteractive({ useHandCursor:true });
 
@@ -173,7 +173,7 @@ export default class PrologueScene extends Phaser.Scene {
       120,
       200,
       0xff0000,
-      0.5
+      0
     );
     this.doorArea.setInteractive({ useHandCursor: true });
 
@@ -201,7 +201,7 @@ export default class PrologueScene extends Phaser.Scene {
           width: 200,
           height: 300,
           debugColor: 0xff0000,
-          debugAlpha: 0.5,  // 0으로 바꾸면 안보임
+          debugAlpha: 0,  // 0으로 바꾸면 안보임
           callback: (popupScene) => {
             this.onDoorClickInPopup(popupScene);
           }
