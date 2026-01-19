@@ -22,19 +22,18 @@ export default class PrologueScene extends Phaser.Scene {
 
   preload() {
     // 배경 이미지 로드
-    this.load.image('salon', '/images/backgrounds/salon.png');
-    this.load.image('salon_give', '/images/backgrounds/salon_give_chocolate.png');
+    this.load.image('salon', 'images/backgrounds/salon.png');
+    this.load.image('salon_give', 'images/backgrounds/salon_give_chocolate.png');
     
     // 아이템 이미지 로드
-    this.load.image('cherrybonbon', '/images/items/cherrybonbon.png');
+    this.load.image('cherrybonbon', 'images/items/cherrybonbon.png');
 
     // 팝업 이미지 로드
-    this.load.image('elfdoor', '/images/popup/elfdoor.png');
+    this.load.image('elfdoor', 'images/popup/elfdoor.png');
   
   }
 
   create() {
-    console.log('titleScene 시작!')
     const { width, height } = this.cameras.main;
 
     // 배경 표시
@@ -151,7 +150,7 @@ export default class PrologueScene extends Phaser.Scene {
       detail: {
         id: 'cherrybonbon',
         name: '체리봉봉',
-        image: '/images/items/cherrybonbon.png'
+        image: 'images/items/cherrybonbon.png'
       }
     }));
 
