@@ -30,11 +30,13 @@ function GameCanvas() {
   }, []);
 
   return (
-    <div 
+    <div
       ref={gameRef}
+      id="game-container"
       style={{
-        width: '720px',
-        height: '900px',
+        width: '100%',
+        maxWidth: '720px',
+        aspectRatio: '720 / 900',
         margin: '0 auto',
         backgroundColor: '#000'  // 로딩 중 배경
       }}

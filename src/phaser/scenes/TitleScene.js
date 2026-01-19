@@ -8,7 +8,7 @@ export default class TitleScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('game_title', '/assets/images/backgrounds/game_title.png');
+    this.load.image('game_title', 'assets/images/backgrounds/game_title.png');
   }
 
   create() {
@@ -17,8 +17,9 @@ export default class TitleScene extends Phaser.Scene {
     // 배경 (임시 - 초콜릿 색)
     this.add.rectangle(width / 2, height / 2, width, height, COLORS.chocolate);
 
-    // 게임 타이틀 이미지
+    // 게임 타이틀 이미지 (화면에 맞게 조절)
     this.add.image(width / 2, height / 2, 'game_title')
+      .setDisplaySize(width, height);
 
     // 게임 타이틀
     this.add.text(width / 2, height / 3, '달다쿠 살롱', TEXT_STYLES.title)

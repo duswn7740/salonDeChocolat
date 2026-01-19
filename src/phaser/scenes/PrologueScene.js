@@ -59,9 +59,9 @@ export default class PrologueScene extends Phaser.Scene {
     ownerArea.setInteractive({ useHandCursor:true})
 
     
-    // 캐릭터 클릭 시 대화 시작
+    // 캐릭터 클릭 시 대화 시작 (대화 완료 전에만)
     ownerArea.on('pointerdown', () => {
-      if (!this.dialogStarted) {
+      if (!this.dialogStarted && !this.dialogCompleted) {
         this.startDialog();
       }
     });

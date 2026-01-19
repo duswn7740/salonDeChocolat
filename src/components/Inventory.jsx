@@ -64,8 +64,8 @@ function Inventory() {
     }
   };
 
-  // 최소 5개의 슬롯 보장
-  const MIN_SLOTS = 5;
+  // 최소 4개의 슬롯 보장 (360px 모바일 기준)
+  const MIN_SLOTS = 8;
   const emptySlotCount = Math.max(0, MIN_SLOTS - items.length);
 
   return (

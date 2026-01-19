@@ -11,7 +11,6 @@ const config = {
   type: Phaser.AUTO,  // WebGL 또는 Canvas 자동 선택
   width: 720,         // 게임 캔버스 가로
   height: 900,        // 게임 캔버스 세로
-  parent: 'game-container',  // HTML의 어느 요소에 붙일지
   backgroundColor: '#2d2d2d',  // 임시 배경색 (나중에 이미지로 교체)
   pixelArt: false,    // 픽셀 아트 게임이면 true (우리는 false)
   
@@ -39,8 +38,8 @@ const config = {
 
   // 모바일 대응
   scale: {
-    mode: Phaser.Scale.FIT,  // 화면에 맞춤
-    autoCenter: Phaser.Scale.CENTER_BOTH  // 중앙 정렬
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_HORIZONTALLY
   }
 };
 
