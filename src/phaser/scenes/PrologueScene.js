@@ -5,10 +5,6 @@ import { COLORS, TEXT_STYLES } from '../styles/gameStyles';
 export default class PrologueScene extends Phaser.Scene {
   constructor() {
     super({ key: 'PrologueScene' });
-    this.dialogIndex = 0;
-    this.dialogStarted = false;
-    this.hasCherryBonbon = false;
-    this.cherryBonbonActivated = false;
     this.dialogs = [
       '어서오세요!',
       '잘됐다! 조금만 도와주시겠어요?',
@@ -20,16 +16,26 @@ export default class PrologueScene extends Phaser.Scene {
     ];
   }
 
+  // 씬 시작 시 상태 초기화
+  init() {
+    this.dialogIndex = 0;
+    this.dialogStarted = false;
+    this.dialogCompleted = false; // 대화 완료 여부
+    this.hasCherryBonbon = false;
+    this.cherryBonbonActivated = false;
+    this.doorArea = null;
+  }
+
   preload() {
     // 배경 이미지 로드
-    this.load.image('salon', 'images/backgrounds/salon.png');
-    this.load.image('salon_give', 'images/backgrounds/salon_give_chocolate.png');
-    
+    this.load.image('salon', 'assets/images/backgrounds/salon.png');
+    this.load.image('salon_give', 'assets/images/backgrounds/salon_give_chocolate.png');
+
     // 아이템 이미지 로드
-    this.load.image('cherrybonbon', 'images/items/cherrybonbon.png');
+    this.load.image('cherrybonbon', 'assets/images/items/cherrybonbon.png');
 
     // 팝업 이미지 로드
-    this.load.image('elfdoor', 'images/popup/elfdoor.png');
+    this.load.image('elfdoor', 'assets/images/popup/elfdoor.png');
   
   }
 
@@ -112,7 +118,12 @@ export default class PrologueScene extends Phaser.Scene {
     } else {
       // 대화 종료
       this.dialogStarted = false;
-      this.showCherryBonbon();
+
+      // 이미 대화 완료했으면 중복 실행 방지
+      if (!this.dialogCompleted) {
+        this.dialogCompleted = true;
+        this.showCherryBonbon();
+      }
     }
   }
 
@@ -126,7 +137,7 @@ export default class PrologueScene extends Phaser.Scene {
     this.background.setTexture('salon_give');
 
     // 체리봉봉 영역(보이지 않음)
-    const bonbonArea = this.add.rectangle(
+    this.bonbonArea = this.add.rectangle(
       width / 1.4,
       height / 2.83,
       50,
@@ -134,28 +145,34 @@ export default class PrologueScene extends Phaser.Scene {
       0xff0000,
       0
     );
-    bonbonArea.setInteractive({ useHandCursor:true });
+    this.bonbonArea.setInteractive({ useHandCursor:true });
 
-    bonbonArea.on('pointerdown', ()=>{
-      this.collectCherryBonbon(bonbonArea);
+    this.bonbonArea.on('pointerdown', ()=>{
+      this.collectCherryBonbon();
     })
 
     // 요정의 문 영역도 함께 생성
     this.createFairyDoor();
   }
 
-  collectCherryBonbon(bonbon) {
+  collectCherryBonbon() {
+    // 이미 획득했으면 무시
+    if (this.hasCherryBonbon) return;
+
     // 아이템 획득
     window.dispatchEvent(new CustomEvent('addItem', {
       detail: {
         id: 'cherrybonbon',
         name: '체리봉봉',
-        image: 'images/items/cherrybonbon.png'
+        image: 'assets/images/items/cherrybonbon.png'
       }
     }));
 
-    // 아이템 제거
-    bonbon.destroy();
+    // 아이템 영역 제거
+    if (this.bonbonArea) {
+      this.bonbonArea.destroy();
+      this.bonbonArea = null;
+    }
     this.hasCherryBonbon = true;
 
     // 배경을 다시salon 으로 전환
@@ -163,6 +180,9 @@ export default class PrologueScene extends Phaser.Scene {
   }
 
   createFairyDoor() {
+    // 이미 생성되었으면 무시
+    if (this.doorArea) return;
+
     const { width, height } = this.cameras.main;
 
     // 요정의 문 영역 (this에 저장)

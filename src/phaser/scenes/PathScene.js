@@ -8,7 +8,7 @@ export default class PathScene extends Phaser.Scene {
 
   preload() {
     // 배경 이미지 로드
-    this.load.image('path', '/images/backgrounds/path.png');
+    this.load.image('path', 'assets/images/backgrounds/path.png');
   }
 
   create() {
