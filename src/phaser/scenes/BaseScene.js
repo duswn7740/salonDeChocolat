@@ -14,6 +14,9 @@ export default class BaseScene extends Phaser.Scene {
 
   // create() 후 자동으로 페이드 인
   create() {
+    // 씬 재진입 시 전환 플래그 초기화
+    this.isTransitioning = false;
+
     // 검은 화면에서 시작해서 페이드 인
     this.cameras.main.fadeIn(this.fadeDuration, 0, 0, 0);
   }

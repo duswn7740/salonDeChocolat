@@ -55,6 +55,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('salon', 'assets/images/backgrounds/salon.png');
     this.load.image('salon_give_chocolate', 'assets/images/backgrounds/salon_give_chocolate.png');
     this.load.image('path', 'assets/images/backgrounds/path.png');
+    this.load.image('path_get_woodstick', 'assets/images/backgrounds/path_get_woodstick.png');
     this.load.image('barn', 'assets/images/backgrounds/barn.png');
     this.load.image('forest', 'assets/images/backgrounds/forest.png');
 

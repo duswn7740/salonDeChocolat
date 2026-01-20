@@ -28,8 +28,9 @@ export default class PathScene extends BaseScene {
 
     const { width, height } = this.cameras.main;
 
-    // 배경 표시
-    this.background = this.add.image(width / 2, height / 2, 'path')
+    // 배경 표시 (나뭇가지 획득 여부에 따라 다른 배경)
+    const bgKey = this.collectedItems.stump ? 'path_get_woodstick' : 'path';
+    this.background = this.add.image(width / 2, height / 2, bgKey)
       .setOrigin(0.5)
       .setDisplaySize(width, height);
 
@@ -250,22 +251,25 @@ export default class PathScene extends BaseScene {
       }));
     }
 
+    // 나뭇가지 획득 시 배경 즉시 변경
+    if (type === 'stump') {
+      const { width, height } = this.cameras.main;
+      this.background.setTexture('path_get_woodstick');
+      this.background.setDisplaySize(width, height);
+    }
+
     // before 이미지만 제거 (깜빡임 없이 자연스럽게 after 노출)
     popupScene.removeBeforeImage();
   }
 
   // 왼쪽 길(외양간)로 이동
   goToLeftPath() {
-    console.log('외양간으로 이동');
-    // TODO: 다음 씬으로 페이드 전환
-    // this.fadeToScene('BarnScene');
+    this.fadeToScene('BarnScene');
   }
 
   // 오른쪽 길(숲)로 이동
   goToRightPath() {
-    console.log('숲으로 이동');
-    // TODO: 다음 씬으로 페이드 전환
-    // this.fadeToScene('ForestScene');
+    this.fadeToScene('ForestScene');
   }
 
   // 되돌아가기

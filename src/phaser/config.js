@@ -5,6 +5,8 @@ import TitleScene from './scenes/TitleScene';
 import PrologueScene from './scenes/PrologueScene';
 import PopupScene from './scenes/PopupScene';
 import PathScene from './scenes/PathScene';
+import BarnScene from './scenes/BarnScene';
+import ForestScene from './scenes/ForestScene';
 
 const config = {
   type: Phaser.AUTO,  // WebGL 또는 Canvas 자동 선택
@@ -28,9 +30,9 @@ const config = {
     TitleScene,     // 타이틀 화면
     PrologueScene,  // 프롤로그 (살롱)
     PathScene,      // 오솔길
+    BarnScene,      // 외양간
+    ForestScene,    // 숲
     PopupScene,     // 팝업 (오버레이)
-    // BarnScene,
-    // ForestScene,
     // CabinScene,
     // RiversideScene,
     // EndingScene
