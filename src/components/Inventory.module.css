@@ -41,6 +41,7 @@
   align-items: center;
   justify-content: center;
   font-size: 12px;
+  position: relative;
 }
 
 /* 화살표 버튼 */
@@ -82,6 +83,21 @@
 .selected {
   border: 3px solid #ffcc00;
   box-shadow: 0 0 10px #ffcc00;
+}
+
+/* 선택된 아이템 이름 */
+.itemName {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffcc00;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 100000;
 }
 
 /* 빈 슬롯 */

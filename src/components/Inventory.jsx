@@ -100,6 +100,10 @@ function Inventory() {
             ) : (
               <span>{item.name}</span>
             )}
+            {/* 선택된 아이템 이름 표시 */}
+            {selectedItem === item.id && (
+              <span className={styles.itemName}>{item.name}</span>
+            )}
           </div>
         ))}
         {/* 빈 슬롯 (최소 5개 보장) */}

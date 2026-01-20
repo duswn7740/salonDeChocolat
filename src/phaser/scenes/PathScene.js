@@ -10,6 +10,14 @@ export default class PathScene extends Phaser.Scene {
   init() {
     // 상태 초기화
     this.activeArea = null; // 현재 활성화된 클릭 영역
+
+    // 아이템 획득 상태 (씬 재방문 시에도 유지하려면 window나 별도 저장소 사용)
+    this.collectedItems = window.pathSceneCollectedItems || {
+      signpost: false,
+      stump: false,
+      rock: false,
+      bush: false
+    };
   }
 
   preload() {
@@ -17,10 +25,20 @@ export default class PathScene extends Phaser.Scene {
     this.load.image('path', 'assets/images/backgrounds/path.png');
 
     // 팝업 이미지 로드 (나중에 실제 이미지로 교체)
-    // this.load.image('signpost_popup', 'assets/images/popup/signpost.png');
-    // this.load.image('stump_popup', 'assets/images/popup/stump.png');
-    // this.load.image('rock_popup', 'assets/images/popup/rock.png');
-    // this.load.image('bush_popup', 'assets/images/popup/bush.png');
+    this.load.image('signpost_before', 'assets/images/popup/signpost_before.png');
+    this.load.image('signpost_after', 'assets/images/popup/signpost_after.png');
+    this.load.image('stump_before', 'assets/images/popup/stump_before.png');
+    this.load.image('stump_after', 'assets/images/popup/stump_after.png');
+    this.load.image('rock_before', 'assets/images/popup/rock_before.png');
+    this.load.image('rock_after', 'assets/images/popup/rock_after.png');
+    this.load.image('bush_before', 'assets/images/popup/bush_before.png');
+    this.load.image('bush_after', 'assets/images/popup/bush_after.png');
+
+    // 아이템 이미지 로드
+    this.load.image('coin', 'assets/images/items/coin.png')
+    this.load.image('paper1', 'assets/images/items/paper1.png')
+    this.load.image('strong_woodstick', 'assets/images/items/strong_woodstick.png')
+    this.load.image('yellow_key', 'assets/images/items/yellow_key.png')
   }
 
   create() {
@@ -44,7 +62,7 @@ export default class PathScene extends Phaser.Scene {
   createInteractiveAreas() {
     const { width, height } = this.cameras.main;
 
-    // 1. 표지판 영역 (임시 위치 - 나중에 조정)
+    // 1. 표지판 영역
     this.signpostArea = createClickArea(this,
       width * 0.5,   // x: 왼쪽 20% 위치
       height * 0.35,  // y: 위에서 30% 위치
@@ -118,19 +136,24 @@ export default class PathScene extends Phaser.Scene {
     // 모든 클릭 영역 비활성화
     this.disableAllAreas();
 
-    // 팝업 설정
+    // 이미 아이템을 획득했는지 확인
+    const isCollected = this.collectedItems[type];
+
+    // 팝업 설정 (before/after 이미지 분기)
     const popupConfig = {
       signpost: {
-        // popupImage: 'signpost_popup', // 나중에 이미지 추가
-        popupSize: { width: 400, height: 400 },
-        clickAreas: [
+        popupImage: isCollected ? 'signpost_after' : 'signpost_before',
+        popupSize: { width: 500, height: 500 },
+        // 아이템 미획득 시에만 클릭 영역 표시
+        clickAreas: isCollected ? [] : [
           {
-            x: width / 2,
-            y: height / 2,
-            width: 150,
-            height: 150,
+            // TODO: 아이템 클릭 영역 위치 조정
+            x: width / 1.9,
+            y: height / 2.7,
+            width: 20,
+            height: 20,
             debugColor: 0x00ff00,
-            debugAlpha: 0, // 0으로 바꾸면 안보임
+            debugAlpha: 0, // 테스트용, 완성 후 0으로
             callback: (popupScene) => {
               this.onPopupItemClick(popupScene, 'signpost');
             }
@@ -138,12 +161,13 @@ export default class PathScene extends Phaser.Scene {
         ]
       },
       stump: {
-        // popupImage: 'stump_popup',
-        popupSize: { width: 400, height: 400 },
-        clickAreas: [
+        popupImage: isCollected ? 'stump_after' : 'stump_before',
+        popupSize: { width: 500, height: 500 },
+        clickAreas: isCollected ? [] : [
           {
+            // TODO: 아이템 클릭 영역 위치 조정
             x: width / 2,
-            y: height / 2,
+            y: height / 2.3,
             width: 150,
             height: 150,
             debugColor: 0x00ff00,
@@ -155,14 +179,15 @@ export default class PathScene extends Phaser.Scene {
         ]
       },
       rock: {
-        // popupImage: 'rock_popup',
-        popupSize: { width: 400, height: 400 },
-        clickAreas: [
+        popupImage: isCollected ? 'rock_after' : 'rock_before',
+        popupSize: { width: 500, height: 500 },
+        clickAreas: isCollected ? [] : [
           {
-            x: width / 2,
-            y: height / 2,
-            width: 150,
-            height: 150,
+            // TODO: 아이템 클릭 영역 위치 조정
+            x: width / 1.67,
+            y: height / 1.6,
+            width: 45,
+            height: 45,
             debugColor: 0x00ff00,
             debugAlpha: 0,
             callback: (popupScene) => {
@@ -172,14 +197,15 @@ export default class PathScene extends Phaser.Scene {
         ]
       },
       bush: {
-        // popupImage: 'bush_popup',
-        popupSize: { width: 400, height: 400 },
-        clickAreas: [
+        popupImage: isCollected ? 'bush_after' : 'bush_before',
+        popupSize: { width: 500, height: 500 },
+        clickAreas: isCollected ? [] : [
           {
-            x: width / 2,
-            y: height / 2,
-            width: 150,
-            height: 150,
+            // TODO: 아이템 클릭 영역 위치 조정
+            x: width / 1.51,
+            y: height / 1.32,
+            width: 25,
+            height: 25,
             debugColor: 0x00ff00,
             debugAlpha: 0,
             callback: (popupScene) => {
@@ -203,27 +229,67 @@ export default class PathScene extends Phaser.Scene {
 
   // 팝업 내 아이템 클릭 시
   onPopupItemClick(popupScene, type) {
-    // 여기서 아이템 획득 로직 구현
-    // 예: window.dispatchEvent(new CustomEvent('addItem', { detail: { id: 'item_id', name: '아이템명', image: 'path' }}));
+    // 아이템 획득 처리
+    this.collectedItems[type] = true;
+    // 씬 재방문 시에도 상태 유지
+    window.pathSceneCollectedItems = this.collectedItems;
 
-    console.log(`${type} 아이템 클릭!`);
+    // 아이템 정보 설정
+    const itemInfo = {
+      signpost: {
+        // TODO: 아이템 정보 입력
+        id: 'yellow_key',
+        name: '노란색 열쇠',
+        image: 'assets/images/items/yellow_key.png'
+      },
+      stump: {
+        // TODO: 아이템 정보 입력
+        id: 'strong_woodstick',
+        name: '튼튼한 나뭇가지',
+        image: 'assets/images/items/strong_woodstick.png'
+      },
+      rock: {
+        // TODO: 아이템 정보 입력
+        id: 'paper1',
+        name: '종이 조각1',
+        image: 'assets/images/items/paper1.png'
+      },
+      bush: {
+        // TODO: 아이템 정보 입력
+        id: 'coin',
+        name: '작은 동전',
+        image: 'assets/images/items/coin.png'
+      }
+    };
 
-    // 팝업 닫기
+    const item = itemInfo[type];
+
+    // 아이템 인벤토리에 추가
+    if (item.id) {
+      window.dispatchEvent(new CustomEvent('addItem', {
+        detail: item
+      }));
+    }
+
+    // 팝업 닫고 after 이미지로 다시 열기
     popupScene.scene.stop('PopupScene');
-    this.enableAllAreas();
-    this.activeArea = null;
+
+    // 잠시 후 after 팝업 표시
+    this.time.delayedCall(100, () => {
+      this.showPopup(type);
+    });
   }
 
-  // 왼쪽 길로 이동
+  // 왼쪽 길(외양간)로 이동
   goToLeftPath() {
-    console.log('왼쪽 길로 이동');
+    console.log('외양간으로 이동');
     // TODO: 다음 씬으로 이동
     // this.scene.start('LeftPathScene');
   }
 
-  // 오른쪽 길로 이동
+  // 오른쪽 길(숲)로 이동
   goToRightPath() {
-    console.log('오른쪽 길로 이동');
+    console.log('숲으로 이동');
     // TODO: 다음 씬으로 이동
     // this.scene.start('RightPathScene');
   }
