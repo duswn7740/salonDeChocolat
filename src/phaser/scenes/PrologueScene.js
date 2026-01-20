@@ -1,8 +1,8 @@
 // src/phaser/scenes/PrologueScene.js
-import Phaser from 'phaser';
+import BaseScene from './BaseScene';
 import { COLORS, TEXT_STYLES } from '../styles/gameStyles';
 
-export default class PrologueScene extends Phaser.Scene {
+export default class PrologueScene extends BaseScene {
   constructor() {
     super({ key: 'PrologueScene' });
     this.dialogs = [
@@ -26,20 +26,12 @@ export default class PrologueScene extends Phaser.Scene {
     this.doorArea = null;
   }
 
-  preload() {
-    // 배경 이미지 로드
-    this.load.image('salon', 'assets/images/backgrounds/salon.png');
-    this.load.image('salon_give', 'assets/images/backgrounds/salon_give_chocolate.png');
-
-    // 아이템 이미지 로드
-    this.load.image('cherrybonbon', 'assets/images/items/cherrybonbon.png');
-
-    // 팝업 이미지 로드
-    this.load.image('elfdoor', 'assets/images/popup/elfdoor.png');
-  
-  }
+  // preload는 BootScene에서 처리하므로 제거
 
   create() {
+    // 부모 클래스의 create() 호출 (페이드 인)
+    super.create();
+
     const { width, height } = this.cameras.main;
 
     // 배경 표시
@@ -56,16 +48,15 @@ export default class PrologueScene extends Phaser.Scene {
       0xff0000,
       0
     );
-    ownerArea.setInteractive({ useHandCursor:true})
+    ownerArea.setInteractive({ useHandCursor: true });
 
-    
     // 캐릭터 클릭 시 대화 시작 (대화 완료 전에만)
     ownerArea.on('pointerdown', () => {
       if (!this.dialogStarted && !this.dialogCompleted) {
         this.startDialog();
       }
     });
-    
+
     // DialogBox 클릭 이벤트 리스닝 (대화 진행용)
     this.handleDialogClick = () => this.nextDialog();
     window.addEventListener('dialogClick', this.handleDialogClick);
@@ -89,7 +80,7 @@ export default class PrologueScene extends Phaser.Scene {
 
   startDialog() {
     this.dialogStarted = true;
-    this.dialogIndex=0;
+    this.dialogIndex = 0;
     this.showDialog(this.dialogs[0]);
   }
 
@@ -134,7 +125,7 @@ export default class PrologueScene extends Phaser.Scene {
     window.dispatchEvent(new CustomEvent('hideDialog'));
 
     // 배경을 초콜릿 주는 장면으로 전환
-    this.background.setTexture('salon_give');
+    this.background.setTexture('salon_give_chocolate');
 
     // 체리봉봉 영역(보이지 않음)
     this.bonbonArea = this.add.rectangle(
@@ -145,11 +136,11 @@ export default class PrologueScene extends Phaser.Scene {
       0xff0000,
       0
     );
-    this.bonbonArea.setInteractive({ useHandCursor:true });
+    this.bonbonArea.setInteractive({ useHandCursor: true });
 
-    this.bonbonArea.on('pointerdown', ()=>{
+    this.bonbonArea.on('pointerdown', () => {
       this.collectCherryBonbon();
-    })
+    });
 
     // 요정의 문 영역도 함께 생성
     this.createFairyDoor();
@@ -175,7 +166,7 @@ export default class PrologueScene extends Phaser.Scene {
     }
     this.hasCherryBonbon = true;
 
-    // 배경을 다시salon 으로 전환
+    // 배경을 다시 salon으로 전환
     this.background.setTexture('salon');
   }
 
@@ -197,7 +188,7 @@ export default class PrologueScene extends Phaser.Scene {
     this.doorArea.setInteractive({ useHandCursor: true });
 
     this.doorArea.on('pointerdown', () => {
-      this.showElfDoorPopup()
+      this.showElfDoorPopup();
     });
   }
 
@@ -220,7 +211,7 @@ export default class PrologueScene extends Phaser.Scene {
           width: 200,
           height: 300,
           debugColor: 0xff0000,
-          debugAlpha: 0,  // 0으로 바꾸면 안보임
+          debugAlpha: 0,
           callback: (popupScene) => {
             this.onDoorClickInPopup(popupScene);
           }
@@ -235,23 +226,22 @@ export default class PrologueScene extends Phaser.Scene {
     });
   }
 
+  onDoorClickInPopup(popupScene) {
+    if (this.cherryBonbonActivated) {
+      popupScene.scene.stop('PopupScene');
 
-onDoorClickInPopup(popupScene) {
-  if (this.cherryBonbonActivated) {
-    popupScene.scene.stop('PopupScene');
+      // 체리봉봉 인벤토리에서 삭제
+      window.dispatchEvent(new CustomEvent('removeItem', {
+        detail: { id: 'cherrybonbon' }
+      }));
 
-    // 체리봉봉 인벤토리에서 삭제
-    window.dispatchEvent(new CustomEvent('removeItem', {
-      detail: { id: 'cherrybonbon' }
-    }));
-
-    // PathScene으로 이동
-    this.scene.start('PathScene');
-  } else {
-    // 팝업 유지하면서 힌트 dialog 표시 (2초 후 자동 닫힘)
-    this.showHintDialog('문이 너무 작아...');
+      // PathScene으로 페이드 전환
+      this.fadeToScene('PathScene');
+    } else {
+      // 팝업 유지하면서 힌트 dialog 표시 (2초 후 자동 닫힘)
+      this.showHintDialog('문이 너무 작아...');
+    }
   }
-}
 
   shutdown() {
     window.removeEventListener('dialogClick', this.handleDialogClick);

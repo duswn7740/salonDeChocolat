@@ -1,17 +1,18 @@
 // src/phaser/scenes/TitleScene.js
-import Phaser from 'phaser';
+import BaseScene from './BaseScene';
 import { COLORS, TEXT_STYLES, BUTTON_STYLES } from '../styles/gameStyles';
 
-export default class TitleScene extends Phaser.Scene {
+export default class TitleScene extends BaseScene {
   constructor() {
     super({ key: 'TitleScene' });
   }
 
-  preload() {
-    this.load.image('game_title', 'assets/images/backgrounds/game_title.png');
-  }
+  // preload는 BootScene에서 처리하므로 제거
 
   create() {
+    // 부모 클래스의 create() 호출 (페이드 인)
+    super.create();
+
     const { width, height } = this.cameras.main;
 
     // 배경 (임시 - 초콜릿 색)
@@ -31,17 +32,17 @@ export default class TitleScene extends Phaser.Scene {
 
     // 게임 시작 버튼
     const startButton = this.add.rectangle(
-      width / 2, 
-      height / 2 + 100, 
+      width / 2,
+      height / 2 + 100,
       BUTTON_STYLES.width,
       BUTTON_STYLES.height,
       BUTTON_STYLES.normalColor
     );
-    
+
     const startText = this.add.text(
-      width / 2, 
-      height / 2 + 100, 
-      '게임 시작', 
+      width / 2,
+      height / 2 + 100,
+      '게임 시작',
       TEXT_STYLES.button
     ).setOrigin(0.5);
 
@@ -59,14 +60,10 @@ export default class TitleScene extends Phaser.Scene {
       startText.setScale(1);
     });
 
-    // 클릭 효과 및 씬 전환
+    // 클릭 효과 및 페이드 전환
     startButton.on('pointerdown', () => {
       startButton.setFillStyle(BUTTON_STYLES.clickColor);
-      
-      this.time.delayedCall(200, () => {
-        this.scene.start('PrologueScene');
-      });
+      this.fadeToScene('PrologueScene');
     });
-
   }
 }

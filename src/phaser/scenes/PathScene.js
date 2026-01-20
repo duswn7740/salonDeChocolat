@@ -1,8 +1,8 @@
 // src/phaser/scenes/PathScene.js
-import Phaser from 'phaser';
+import BaseScene from './BaseScene';
 import { createClickArea } from '../utils/createClickArea';
 
-export default class PathScene extends Phaser.Scene {
+export default class PathScene extends BaseScene {
   constructor() {
     super({ key: 'PathScene' });
   }
@@ -20,28 +20,12 @@ export default class PathScene extends Phaser.Scene {
     };
   }
 
-  preload() {
-    // 배경 이미지 로드
-    this.load.image('path', 'assets/images/backgrounds/path.png');
-
-    // 팝업 이미지 로드 (나중에 실제 이미지로 교체)
-    this.load.image('signpost_before', 'assets/images/popup/signpost_before.png');
-    this.load.image('signpost_after', 'assets/images/popup/signpost_after.png');
-    this.load.image('stump_before', 'assets/images/popup/stump_before.png');
-    this.load.image('stump_after', 'assets/images/popup/stump_after.png');
-    this.load.image('rock_before', 'assets/images/popup/rock_before.png');
-    this.load.image('rock_after', 'assets/images/popup/rock_after.png');
-    this.load.image('bush_before', 'assets/images/popup/bush_before.png');
-    this.load.image('bush_after', 'assets/images/popup/bush_after.png');
-
-    // 아이템 이미지 로드
-    this.load.image('coin', 'assets/images/items/coin.png')
-    this.load.image('paper1', 'assets/images/items/paper1.png')
-    this.load.image('strong_woodstick', 'assets/images/items/strong_woodstick.png')
-    this.load.image('yellow_key', 'assets/images/items/yellow_key.png')
-  }
+  // preload는 BootScene에서 처리하므로 제거
 
   create() {
+    // 부모 클래스의 create() 호출 (페이드 인)
+    super.create();
+
     const { width, height } = this.cameras.main;
 
     // 배경 표시
@@ -64,17 +48,17 @@ export default class PathScene extends Phaser.Scene {
 
     // 1. 표지판 영역
     this.signpostArea = createClickArea(this,
-      width * 0.5,   // x: 왼쪽 20% 위치
-      height * 0.35,  // y: 위에서 30% 위치
-      100, 150,      // 너비, 높이
+      width * 0.5,
+      height * 0.35,
+      100, 150,
       () => this.showPopup('signpost'),
-      0, 
+      0,
     );
 
     // 2. 나무밑둥 영역
     this.stumpArea = createClickArea(this,
-      width * 0.1,  // x: 오른쪽 75% 위치
-      height * 0.6,  // y: 중간
+      width * 0.1,
+      height * 0.6,
       120, 100,
       () => this.showPopup('stump'),
       0,
@@ -82,8 +66,8 @@ export default class PathScene extends Phaser.Scene {
 
     // 3. 돌덩이 영역
     this.rockArea = createClickArea(this,
-      width * 0.24,   // x: 왼쪽 30% 위치
-      height * 0.78, // y: 아래쪽
+      width * 0.24,
+      height * 0.78,
       210, 130,
       () => this.showPopup('rock'),
       0,
@@ -91,26 +75,26 @@ export default class PathScene extends Phaser.Scene {
 
     // 4. 풀숲 영역
     this.bushArea = createClickArea(this,
-      width * 0.9,   // x: 오른쪽 60% 위치
-      height * 0.65,  // y: 아래쪽
+      width * 0.9,
+      height * 0.65,
       140, 250,
       () => this.showPopup('bush'),
       0,
     );
 
-    // 5. 왼쪽 길 영역
+    // 5. 왼쪽 길 영역 (외양간)
     this.leftPathArea = createClickArea(this,
-      width * 0.05,  // x: 왼쪽 끝
-      height * 0.3, // y
+      width * 0.05,
+      height * 0.3,
       120, 150,
       () => this.goToLeftPath(),
       0
     );
 
-    // 6. 오른쪽 길 영역
+    // 6. 오른쪽 길 영역 (숲)
     this.rightPathArea = createClickArea(this,
-      width * 0.95,  // x: 오른쪽 끝
-      height * 0.3, // y
+      width * 0.95,
+      height * 0.3,
       120, 150,
       () => this.goToRightPath(),
       0
@@ -118,8 +102,8 @@ export default class PathScene extends Phaser.Scene {
 
     // 7. 되돌아가기 영역 (아래쪽)
     this.backArea = createClickArea(this,
-      width * 0.5,   // x: 중앙
-      height * 1,    // y: 맨 아래
+      width * 0.5,
+      height * 1,
       210, 80,
       () => this.goBack(),
       0
@@ -139,21 +123,20 @@ export default class PathScene extends Phaser.Scene {
     // 이미 아이템을 획득했는지 확인
     const isCollected = this.collectedItems[type];
 
-    // 팝업 설정 (before/after 이미지 분기)
+    // 팝업 설정 (레이어 방식: after를 깔고 before를 위에 올림)
     const popupConfig = {
       signpost: {
         popupImage: isCollected ? 'signpost_after' : 'signpost_before',
+        popupImageAfter: isCollected ? null : 'signpost_after',
         popupSize: { width: 500, height: 500 },
-        // 아이템 미획득 시에만 클릭 영역 표시
         clickAreas: isCollected ? [] : [
           {
-            // TODO: 아이템 클릭 영역 위치 조정
             x: width / 1.9,
             y: height / 2.7,
             width: 20,
             height: 20,
             debugColor: 0x00ff00,
-            debugAlpha: 0, // 테스트용, 완성 후 0으로
+            debugAlpha: 0,
             callback: (popupScene) => {
               this.onPopupItemClick(popupScene, 'signpost');
             }
@@ -162,10 +145,10 @@ export default class PathScene extends Phaser.Scene {
       },
       stump: {
         popupImage: isCollected ? 'stump_after' : 'stump_before',
+        popupImageAfter: isCollected ? null : 'stump_after',
         popupSize: { width: 500, height: 500 },
         clickAreas: isCollected ? [] : [
           {
-            // TODO: 아이템 클릭 영역 위치 조정
             x: width / 2,
             y: height / 2.3,
             width: 150,
@@ -180,10 +163,10 @@ export default class PathScene extends Phaser.Scene {
       },
       rock: {
         popupImage: isCollected ? 'rock_after' : 'rock_before',
+        popupImageAfter: isCollected ? null : 'rock_after',
         popupSize: { width: 500, height: 500 },
         clickAreas: isCollected ? [] : [
           {
-            // TODO: 아이템 클릭 영역 위치 조정
             x: width / 1.67,
             y: height / 1.6,
             width: 45,
@@ -198,10 +181,10 @@ export default class PathScene extends Phaser.Scene {
       },
       bush: {
         popupImage: isCollected ? 'bush_after' : 'bush_before',
+        popupImageAfter: isCollected ? null : 'bush_after',
         popupSize: { width: 500, height: 500 },
         clickAreas: isCollected ? [] : [
           {
-            // TODO: 아이템 클릭 영역 위치 조정
             x: width / 1.51,
             y: height / 1.32,
             width: 25,
@@ -237,25 +220,21 @@ export default class PathScene extends Phaser.Scene {
     // 아이템 정보 설정
     const itemInfo = {
       signpost: {
-        // TODO: 아이템 정보 입력
         id: 'yellow_key',
         name: '노란색 열쇠',
         image: 'assets/images/items/yellow_key.png'
       },
       stump: {
-        // TODO: 아이템 정보 입력
         id: 'strong_woodstick',
         name: '튼튼한 나뭇가지',
         image: 'assets/images/items/strong_woodstick.png'
       },
       rock: {
-        // TODO: 아이템 정보 입력
         id: 'paper1',
         name: '종이 조각1',
         image: 'assets/images/items/paper1.png'
       },
       bush: {
-        // TODO: 아이템 정보 입력
         id: 'coin',
         name: '작은 동전',
         image: 'assets/images/items/coin.png'
@@ -271,38 +250,32 @@ export default class PathScene extends Phaser.Scene {
       }));
     }
 
-    // 팝업 닫고 after 이미지로 다시 열기
-    popupScene.scene.stop('PopupScene');
-
-    // 잠시 후 after 팝업 표시
-    this.time.delayedCall(100, () => {
-      this.showPopup(type);
-    });
+    // before 이미지만 제거 (깜빡임 없이 자연스럽게 after 노출)
+    popupScene.removeBeforeImage();
   }
 
   // 왼쪽 길(외양간)로 이동
   goToLeftPath() {
     console.log('외양간으로 이동');
-    // TODO: 다음 씬으로 이동
-    // this.scene.start('LeftPathScene');
+    // TODO: 다음 씬으로 페이드 전환
+    // this.fadeToScene('BarnScene');
   }
 
   // 오른쪽 길(숲)로 이동
   goToRightPath() {
     console.log('숲으로 이동');
-    // TODO: 다음 씬으로 이동
-    // this.scene.start('RightPathScene');
+    // TODO: 다음 씬으로 페이드 전환
+    // this.fadeToScene('ForestScene');
   }
 
   // 되돌아가기
   goBack() {
     // 완성된 파베 초콜릿 아이템 체크
-    // 인벤토리 상태를 확인하기 위해 커스텀 이벤트 사용
     const hasCompletedChocolate = this.checkHasItem('completed_pave_chocolate');
 
     if (hasCompletedChocolate) {
-      // 아이템이 있으면 이전 씬으로 이동
-      this.scene.start('PrologueScene');
+      // 아이템이 있으면 이전 씬으로 페이드 전환
+      this.fadeToScene('PrologueScene');
     } else {
       // 아이템이 없으면 힌트 다이얼로그 표시
       this.showHintDialog('지금은 돌아갈 수 없어...');
@@ -311,8 +284,6 @@ export default class PathScene extends Phaser.Scene {
 
   // 아이템 보유 여부 체크 (React Inventory와 연동)
   checkHasItem(itemId) {
-    // 동기적으로 체크하기 위해 window에 저장된 인벤토리 상태 확인
-    // Inventory 컴포넌트에서 window.gameInventory에 상태를 저장하도록 수정 필요
     return window.gameInventory?.some(item => item.id === itemId) || false;
   }
 

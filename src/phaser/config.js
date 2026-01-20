@@ -1,11 +1,10 @@
 // src/phaser/config.js
 import Phaser from 'phaser';
+import BootScene from './scenes/BootScene';
 import TitleScene from './scenes/TitleScene';
 import PrologueScene from './scenes/PrologueScene';
 import PopupScene from './scenes/PopupScene';
 import PathScene from './scenes/PathScene';
-
-
 
 const config = {
   type: Phaser.AUTO,  // WebGL 또는 Canvas 자동 선택
@@ -13,7 +12,7 @@ const config = {
   height: 900,        // 게임 캔버스 세로
   backgroundColor: '#2d2d2d',  // 임시 배경색 (나중에 이미지로 교체)
   pixelArt: false,    // 픽셀 아트 게임이면 true (우리는 false)
-  
+
   // 물리 엔진 (필요하면 사용, 지금은 꺼둠)
   physics: {
     default: 'arcade',
@@ -22,13 +21,14 @@ const config = {
       debug: false         // 개발 중엔 true로 하면 충돌 영역 보임
     }
   },
-  
-  // 씬 목록 (순서대로 실행, 첫 번째가 시작 씬)
+
+  // 씬 목록 (BootScene이 가장 먼저 실행되어 모든 에셋 로드)
   scene: [
-    TitleScene,
-    PrologueScene,
-    PathScene,
-    PopupScene,
+    BootScene,      // 로딩 씬 (모든 에셋 프리로드)
+    TitleScene,     // 타이틀 화면
+    PrologueScene,  // 프롤로그 (살롱)
+    PathScene,      // 오솔길
+    PopupScene,     // 팝업 (오버레이)
     // BarnScene,
     // ForestScene,
     // CabinScene,
