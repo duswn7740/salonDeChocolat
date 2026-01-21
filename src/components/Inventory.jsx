@@ -63,12 +63,14 @@ function Inventory() {
     if (selectedItem === itemId) {
       // 이미 선택된 아이템이면 해제
       setSelectedItem(null);
+      window.gameSelectedItem = null;  // Phaser에서 접근 가능하도록
       window.dispatchEvent(new CustomEvent('itemDeselected', {
         detail: { id: itemId }
       }));
     } else {
       // 새 아이템 선택
       setSelectedItem(itemId);
+      window.gameSelectedItem = itemId;  // Phaser에서 접근 가능하도록
       window.dispatchEvent(new CustomEvent('itemSelected', {
         detail: { id: itemId }
       }));

@@ -38,6 +38,7 @@ export default class PopupScene extends Phaser.Scene {
       .setDisplaySize(popupSize.width, popupSize.height);
 
     // 클릭 영역들 생성 (createClickArea 유틸리티 사용)
+    this.clickAreaObjects = [];
     clickAreas.forEach(area => {
       const clickArea = createClickArea(
         this,
@@ -53,6 +54,7 @@ export default class PopupScene extends Phaser.Scene {
         area.debugAlpha || 0,
         area.debugColor || 0xff0000
       );
+      this.clickAreaObjects.push(clickArea);
 
       // 활성화 하이라이트 (있으면)
       if (area.highlight) {
@@ -88,11 +90,18 @@ export default class PopupScene extends Phaser.Scene {
     ).setOrigin(0.5);
   }
 
-  // before 이미지 제거 (아이템 획득 시 호출)
+  // before 이미지 및 클릭 영역 제거 (아이템 획득 시 호출)
   removeBeforeImage() {
     if (this.beforeImage) {
       this.beforeImage.destroy();
       this.beforeImage = null;
+    }
+    // 클릭 영역들도 함께 제거
+    if (this.clickAreaObjects) {
+      this.clickAreaObjects.forEach(area => {
+        if (area) area.destroy();
+      });
+      this.clickAreaObjects = [];
     }
   }
 }

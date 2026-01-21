@@ -13,8 +13,8 @@ export default class ForestScene extends BaseScene {
 
     // 아이템 획득 상태
     this.collectedItems = window.forestSceneCollectedItems || {
-      // TODO: 아이템 영역 추가
-      // example: false,
+      birdhouse: false,  // 새집
+      axe: false         // 도끼
     };
   }
 
@@ -26,8 +26,9 @@ export default class ForestScene extends BaseScene {
 
     const { width, height } = this.cameras.main;
 
-    // 배경 표시
-    this.background = this.add.image(width / 2, height / 2, 'forest')
+    // 배경 표시 (도끼 획득 여부에 따라 다른 배경)
+    const bgKey = this.collectedItems.axe ? 'forest_get_axe' : 'forest';
+    this.background = this.add.image(width / 2, height / 2, bgKey)
       .setOrigin(0.5)
       .setDisplaySize(width, height);
 
@@ -44,23 +45,42 @@ export default class ForestScene extends BaseScene {
   createInteractiveAreas() {
     const { width, height } = this.cameras.main;
 
-    // TODO: 클릭 영역 추가
-    // 예시:
-    // this.exampleArea = createClickArea(this,
-    //   width * 0.5,
-    //   height * 0.5,
-    //   100, 100,
-    //   () => this.showPopup('example'),
-    //   0.3  // 디버그용 alpha (완성 후 0으로)
-    // );
+    // 1. 새집 영역
+    this.birdhouseArea = createClickArea(this,
+      width * 0.28,   // TODO: x 위치 조정
+      height * 0.48,  // TODO: y 위치 조정
+      100, 100,      // TODO: 크기 조정
+      () => this.showPopup('birdhouse'),
+      0  // 디버그용 alpha (완성 후 0으로)
+    );
 
-    // 되돌아가기 영역 (오솔길로)
+    // 2. 도끼 영역 (획득 전에만 표시)
+    if (!this.collectedItems.axe) {
+      this.axeArea = createClickArea(this,
+        width * 0.24,   // TODO: x 위치 조정
+        height * 0.78,  // TODO: y 위치 조정
+        150, 80,       // TODO: 크기 조정
+        () => this.collectAxe(),
+        0. // 디버그용 alpha (완성 후 0으로)
+      );
+    }
+
+    // 3. 오두막 가는 길 영역
+    this.cabinPathArea = createClickArea(this,
+      width * 0.75,   // TODO: x 위치 조정
+      height * 0.7,  // TODO: y 위치 조정
+      220, 90,      // TODO: 크기 조정
+      () => this.goToCabin(),
+      0  // 디버그용 alpha (완성 후 0으로)
+    );
+
+    // 4. 되돌아가기 영역 (오솔길로)
     this.backArea = createClickArea(this,
-      width * 0.5,  // x: 왼쪽
-      height * 1,  // y: 중간
+      width * 0.5,
+      height * 1,
       210, 80,
       () => this.goBack(),
-      0 
+      0
     );
   }
 
@@ -73,26 +93,27 @@ export default class ForestScene extends BaseScene {
 
     const isCollected = this.collectedItems[type];
 
-    // TODO: 팝업 설정 추가
+    // 팝업 설정
     const popupConfig = {
-      // example: {
-      //   popupImage: isCollected ? 'example_after' : 'example_before',
-      //   popupImageAfter: isCollected ? null : 'example_after',
-      //   popupSize: { width: 500, height: 500 },
-      //   clickAreas: isCollected ? [] : [
-      //     {
-      //       x: width / 2,
-      //       y: height / 2,
-      //       width: 50,
-      //       height: 50,
-      //       debugColor: 0x00ff00,
-      //       debugAlpha: 0.3,
-      //       callback: (popupScene) => {
-      //         this.onPopupItemClick(popupScene, 'example');
-      //       }
-      //     }
-      //   ]
-      // }
+      birdhouse: {
+        popupImage: isCollected ? 'birdhouse_after' : 'birdhouse_before',
+        popupImageAfter: isCollected ? null : 'birdhouse_after',
+        popupSize: { width: 500, height: 500 },
+        clickAreas: isCollected ? [] : [
+          {
+            // TODO: 아이템 클릭 영역 위치 조정
+            x: width / 1.9,
+            y: height / 1.75,
+            width: 50,
+            height: 50,
+            debugColor: 0x00ff00,
+            debugAlpha: 0,  // 완성 후 0으로
+            callback: (popupScene) => {
+              this.onPopupItemClick(popupScene, 'birdhouse');
+            }
+          }
+        ]
+      }
     };
 
     const config = popupConfig[type];
@@ -112,13 +133,14 @@ export default class ForestScene extends BaseScene {
     this.collectedItems[type] = true;
     window.forestSceneCollectedItems = this.collectedItems;
 
-    // TODO: 아이템 정보 설정
+    // 아이템 정보 설정
     const itemInfo = {
-      // example: {
-      //   id: 'item_id',
-      //   name: '아이템 이름',
-      //   image: 'assets/images/items/아이템.png'
-      // }
+      birdhouse: {
+        // TODO: 새집에서 획득하는 아이템 정보 입력
+        id: 'pendant',
+        name: '팬던트',
+        image: 'assets/images/items/pendant.png'
+      }
     };
 
     const item = itemInfo[type];
@@ -130,6 +152,44 @@ export default class ForestScene extends BaseScene {
     }
 
     popupScene.removeBeforeImage();
+  }
+
+  // 도끼 획득
+  collectAxe() {
+    // 이미 획득했으면 무시
+    if (this.collectedItems.axe) return;
+
+    // 아이템 획득 처리
+    this.collectedItems.axe = true;
+    window.forestSceneCollectedItems = this.collectedItems;
+
+    // 아이템 인벤토리에 추가
+    window.dispatchEvent(new CustomEvent('addItem', {
+      detail: {
+        id: 'axe',
+        name: '도끼',
+        image: 'assets/images/items/axe.png'
+      }
+    }));
+
+    // 도끼 클릭 영역 제거
+    if (this.axeArea) {
+      this.axeArea.destroy();
+      this.axeArea = null;
+    }
+
+    // 배경 즉시 변경
+    const { width, height } = this.cameras.main;
+    this.background.setTexture('forest_get_axe');
+    this.background.setDisplaySize(width, height);
+  }
+
+  // 오두막으로 이동
+  goToCabin() {
+    // TODO: CabinScene으로 페이드 전환
+    // this.fadeToScene('CabinScene');
+    console.log('오두막으로 이동');
+    this.showHintDialog('아직 갈 수 없어...');
   }
 
   // 오솔길로 돌아가기
@@ -147,8 +207,10 @@ export default class ForestScene extends BaseScene {
   // 모든 클릭 영역 비활성화
   disableAllAreas() {
     const areas = [
-      this.backArea,
-      // TODO: 추가 영역들
+      this.birdhouseArea,
+      this.axeArea,
+      this.cabinPathArea,
+      this.backArea
     ];
     areas.forEach(area => {
       if (area) area.disableInteractive();
@@ -158,8 +220,10 @@ export default class ForestScene extends BaseScene {
   // 모든 클릭 영역 활성화
   enableAllAreas() {
     const areas = [
-      this.backArea,
-      // TODO: 추가 영역들
+      this.birdhouseArea,
+      this.axeArea,
+      this.cabinPathArea,
+      this.backArea
     ];
     areas.forEach(area => {
       if (area) area.setInteractive({ useHandCursor: true });

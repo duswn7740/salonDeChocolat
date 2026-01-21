@@ -132,14 +132,20 @@ export default class PathScene extends BaseScene {
         popupSize: { width: 500, height: 500 },
         clickAreas: isCollected ? [] : [
           {
-            x: width / 1.9,
-            y: height / 2.7,
+            x: width / 1.95,
+            y: height / 2.8,
             width: 20,
             height: 20,
             debugColor: 0x00ff00,
-            debugAlpha: 0,
+            debugAlpha: 0.3,
             callback: (popupScene) => {
-              this.onPopupItemClick(popupScene, 'signpost');
+              // 핀셋 아이템 사용 체크
+              const hasTweezers = this.checkSelectedItem('tweezers');
+              if (hasTweezers) {
+                this.onPopupItemClick(popupScene, 'signpost');
+              } else {
+                this.showHintDialog('꽉 끼어 있어...');
+              }
             }
           }
         ]
@@ -289,6 +295,11 @@ export default class PathScene extends BaseScene {
   // 아이템 보유 여부 체크 (React Inventory와 연동)
   checkHasItem(itemId) {
     return window.gameInventory?.some(item => item.id === itemId) || false;
+  }
+
+  // 현재 선택된 아이템 체크 (React Inventory와 연동)
+  checkSelectedItem(itemId) {
+    return window.gameSelectedItem === itemId;
   }
 
   // 힌트 다이얼로그 (2초 후 자동 닫힘)
