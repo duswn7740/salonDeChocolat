@@ -142,6 +142,8 @@ export default class PathScene extends BaseScene {
               // 핀셋 아이템 사용 체크
               const hasTweezers = this.checkSelectedItem('tweezers');
               if (hasTweezers) {
+                // tweezers 아이템 제거
+                this.removeItem('tweezers');
                 this.onPopupItemClick(popupScene, 'signpost');
               } else {
                 this.showHintDialog('꽉 끼어 있어...');
@@ -300,6 +302,11 @@ export default class PathScene extends BaseScene {
   // 현재 선택된 아이템 체크 (React Inventory와 연동)
   checkSelectedItem(itemId) {
     return window.gameSelectedItem === itemId;
+  }
+
+  // 아이템 제거 (React Inventory와 연동)
+  removeItem(itemId) {
+    window.dispatchEvent(new CustomEvent('removeItem', { detail: { id: itemId } }));
   }
 
   // 힌트 다이얼로그 (2초 후 자동 닫힘)

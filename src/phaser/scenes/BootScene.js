@@ -57,6 +57,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('path', 'assets/images/backgrounds/path.png');
     this.load.image('path_get_woodstick', 'assets/images/backgrounds/path_get_woodstick.png');
     this.load.image('barn', 'assets/images/backgrounds/barn.png');
+    this.load.image('barn_give_straw', 'assets/images/backgrounds/barn_give_straw.png');
     this.load.image('forest', 'assets/images/backgrounds/forest.png');
     this.load.image('forest_get_axe', 'assets/images/backgrounds/forest_get_axe.png');
 
@@ -73,6 +74,18 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('birdhouse_before', 'assets/images/popup/birdhouse_before.png');
     this.load.image('birdhouse_after', 'assets/images/popup/birdhouse_after.png');
 
+    // Barn 팝업 이미지
+    this.load.image('cow_before', 'assets/images/popup/cow_before.png');
+    this.load.image('cow_get_straw', 'assets/images/popup/cow_get_straw.png');
+    this.load.image('cow_after', 'assets/images/popup/cow_after.png');
+    this.load.image('meal_before', 'assets/images/popup/meal_before.png');
+    this.load.image('meal_with_rake', 'assets/images/popup/meal_with_rake.png');
+    this.load.image('meal_get_blue_key_first', 'assets/images/popup/meal_get_blue_key_first.png');
+    this.load.image('meal_get_tweezers_first', 'assets/images/popup/meal_get_tweezers_first.png');
+    this.load.image('meal_after', 'assets/images/popup/meal_after.png');
+    this.load.image('wheat_straw_before', 'assets/images/popup/wheat_straw_before.png');
+    this.load.image('wheat_straw_after', 'assets/images/popup/wheat_straw_after.png');
+
     // 아이템 이미지
     this.load.image('coin', 'assets/images/items/coin.png');
     this.load.image('paper1', 'assets/images/items/paper1.png');
@@ -81,6 +94,11 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('cherrybonbon', 'assets/images/items/cherrybonbon.png');
     this.load.image('axe', 'assets/images/items/axe.png');
     this.load.image('pendant', 'assets/images/items/pendant.png');
+    this.load.image('rake', 'assets/images/items/rake.png');
+    this.load.image('straw', 'assets/images/items/straw.png');
+    this.load.image('gear', 'assets/images/items/gear.png');
+    this.load.image('blue_key', 'assets/images/items/blue_key.png');
+    this.load.image('tweezers', 'assets/images/items/tweezers.png');
   }
 
   create() {
@@ -88,7 +106,7 @@ export default class BootScene extends Phaser.Scene {
     this.time.delayedCall(500, () => {
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start('ForestScene');  // 테스트용 (원래: 'TitleScene')
+        this.scene.start('BarnScene');  // 테스트용 (원래: 'TitleScene')
       });
     });
   }
