@@ -18,6 +18,7 @@ export default class PopupScene extends Phaser.Scene {
       popupImageAfter, // after 이미지 키 (선택적)
       popupSize = { width: 500, height: 500 },  // 팝업 크기
       clickAreas = [],  // 클릭 영역들
+      overlayItems = [], // 오버레이 아이템들 (서랍 아이템 등)
       onClose          // 닫을 때 콜백
     } = this.popupData;
 
@@ -39,6 +40,18 @@ export default class PopupScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDisplaySize(popupSize.width, popupSize.height)
       .setDepth(2);
+
+    // 오버레이 아이템 이미지들 - depth 2.5 (팝업 위, 클릭영역 아래)
+    this.overlayItemObjects = [];
+    overlayItems.forEach(item => {
+      const itemImage = this.add.image(item.x, item.y, item.key)
+        .setOrigin(0.5)
+        .setDepth(2.5);
+      if (item.scale) {
+        itemImage.setScale(item.scale);
+      }
+      this.overlayItemObjects.push(itemImage);
+    });
 
     // 클릭 영역들 생성 - depth 3
     this.clickAreaObjects = [];

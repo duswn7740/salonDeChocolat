@@ -88,6 +88,24 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('wheat_straw_before', 'assets/images/popup/wheat_straw_before.png');
     this.load.image('wheat_straw_after', 'assets/images/popup/wheat_straw_after.png');
 
+    // Cabin Inside 배경 및 팝업 이미지
+    this.load.image('cabin_inside', 'assets/images/backgrounds/cabin_inside.png');
+    this.load.image('drawer_all_closed', 'assets/images/popup/drawer_all_closed.png');
+    this.load.image('drawer_1_open', 'assets/images/popup/drawer_1_open.png');
+    this.load.image('drawer_2_open', 'assets/images/popup/drawer_2_open.png');
+    this.load.image('drawer_3_open', 'assets/images/popup/drawer_3_open.png');
+    this.load.image('drawer_12_open', 'assets/images/popup/drawer_12_open.png');
+    this.load.image('drawer_13_open', 'assets/images/popup/drawer_13_open.png');
+    this.load.image('drawer_23_open', 'assets/images/popup/drawer_23_open.png');
+    this.load.image('drawer_all_opened', 'assets/images/popup/drawer_all_opened.png');
+    this.load.image('bookshelf', 'assets/images/popup/bookshelf.png');
+
+    // 서랍 오버레이 아이템 이미지 (서랍 위에 표시)
+    this.load.image('weight_overlay', 'assets/images/popup/weight_overlay.png');
+    this.load.image('chocolate_overlay', 'assets/images/popup/chocolate_overlay.png');
+    this.load.image('match_overlay', 'assets/images/popup/match_overlay.png');
+    this.load.image('beaker_overlay', 'assets/images/popup/beaker_overlay.png');
+
     // 아이템 이미지
     this.load.image('coin', 'assets/images/items/coin.png');
     this.load.image('paper1', 'assets/images/items/paper1.png');
@@ -101,6 +119,10 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('gear', 'assets/images/items/gear.png');
     this.load.image('blue_key', 'assets/images/items/blue_key.png');
     this.load.image('tweezers', 'assets/images/items/tweezers.png');
+    this.load.image('weight', 'assets/images/items/weight.png');
+    this.load.image('chocolate', 'assets/images/items/chocolate.png');
+    this.load.image('match', 'assets/images/items/match.png');
+    this.load.image('beaker', 'assets/images/items/beaker.png');
   }
 
   create() {
@@ -108,7 +130,7 @@ export default class BootScene extends Phaser.Scene {
     this.time.delayedCall(500, () => {
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start('CabinOutsideScene');  // 테스트용 (원래: 'TitleScene')
+        this.scene.start('CabinInsideScene');  // 테스트용 (원래: 'TitleScene')
       });
     });
   }
