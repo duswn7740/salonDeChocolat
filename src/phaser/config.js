@@ -7,6 +7,7 @@ import PopupScene from './scenes/PopupScene';
 import PathScene from './scenes/PathScene';
 import BarnScene from './scenes/BarnScene';
 import ForestScene from './scenes/ForestScene';
+import CabinOutsideScene from './scenes/CabinOutsideScene';
 
 const config = {
   type: Phaser.AUTO,  // WebGL 또는 Canvas 자동 선택
@@ -32,8 +33,9 @@ const config = {
     PathScene,      // 오솔길
     BarnScene,      // 외양간
     ForestScene,    // 숲
+    CabinOutsideScene, // 오두막 외부
     PopupScene,     // 팝업 (오버레이)
-    // CabinScene,
+    // CabinInsideScene,
     // RiversideScene,
     // EndingScene
   ],

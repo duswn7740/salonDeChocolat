@@ -60,6 +60,8 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('barn_give_straw', 'assets/images/backgrounds/barn_give_straw.png');
     this.load.image('forest', 'assets/images/backgrounds/forest.png');
     this.load.image('forest_get_axe', 'assets/images/backgrounds/forest_get_axe.png');
+    this.load.image('cabin_outside', 'assets/images/backgrounds/cabin_outside.png');
+    this.load.image('cabin_outside_open_door', 'assets/images/backgrounds/cabin_outside_open_door.png');
 
     // 팝업 이미지
     this.load.image('signpost_before', 'assets/images/popup/signpost_before.png');
@@ -106,7 +108,7 @@ export default class BootScene extends Phaser.Scene {
     this.time.delayedCall(500, () => {
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start('BarnScene');  // 테스트용 (원래: 'TitleScene')
+        this.scene.start('CabinOutsideScene');  // 테스트용 (원래: 'TitleScene')
       });
     });
   }

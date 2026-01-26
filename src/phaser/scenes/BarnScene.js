@@ -110,7 +110,7 @@ export default class BarnScene extends BaseScene {
         y: height / 1.6,
         width: 60,
         height: 60,
-        debugAlpha: 0.3,
+        debugAlpha: 0,
         callback: (popupScene) => this.collectGear(popupScene)
       }];
     } else {
@@ -121,7 +121,7 @@ export default class BarnScene extends BaseScene {
         y: height / 2,
         width: 300,
         height: 300,
-        debugAlpha: 0.3,
+        debugAlpha: 0,
         callback: () => this.feedCow()
       }];
     }
@@ -205,7 +205,7 @@ export default class BarnScene extends BaseScene {
           y: height / 2.15,
           width: 50,
           height: 50,
-          debugAlpha: 0.3,
+          debugAlpha: 0,
           callback: (popupScene) => this.collectMealItem(popupScene, 'tweezers')
         }];
       } else if (this.collectedItems.tweezers) {
@@ -216,7 +216,7 @@ export default class BarnScene extends BaseScene {
           y: height / 2.3,
           width: 50,
           height: 50,
-          debugAlpha: 0.3,
+          debugAlpha: 0,
           callback: (popupScene) => this.collectMealItem(popupScene, 'blue_key')
         }];
       } else {
@@ -228,7 +228,7 @@ export default class BarnScene extends BaseScene {
             y: height / 2.3,
             width: 50,
             height: 50,
-            debugAlpha: 0.3,
+            debugAlpha: 0,
             callback: (popupScene) => this.collectMealItem(popupScene, 'blue_key')
           },
           {
@@ -236,7 +236,7 @@ export default class BarnScene extends BaseScene {
             y: height / 2.15,
             width: 50,
             height: 50,
-            debugAlpha: 0.3,
+            debugAlpha: 0,
             callback: (popupScene) => this.collectMealItem(popupScene, 'tweezers')
           }
         ];
@@ -249,7 +249,7 @@ export default class BarnScene extends BaseScene {
         y: height / 2,
         width: 150,
         height: 150,
-        debugAlpha: 0.3,
+        debugAlpha: 0,
         callback: () => this.useMealRake()
       }];
     }

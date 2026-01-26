@@ -137,7 +137,7 @@ export default class PathScene extends BaseScene {
             width: 20,
             height: 20,
             debugColor: 0x00ff00,
-            debugAlpha: 0.3,
+            debugAlpha: 0,
             callback: (popupScene) => {
               // 핀셋 아이템 사용 체크
               const hasTweezers = this.checkSelectedItem('tweezers');

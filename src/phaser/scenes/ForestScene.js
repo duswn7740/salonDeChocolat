@@ -186,10 +186,7 @@ export default class ForestScene extends BaseScene {
 
   // 오두막으로 이동
   goToCabin() {
-    // TODO: CabinScene으로 페이드 전환
-    // this.fadeToScene('CabinScene');
-    console.log('오두막으로 이동');
-    this.showHintDialog('아직 갈 수 없어...');
+    this.fadeToScene('CabinOutsideScene');
   }
 
   // 오솔길로 돌아가기
