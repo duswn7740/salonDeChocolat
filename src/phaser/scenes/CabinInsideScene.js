@@ -381,7 +381,7 @@ export default class CabinInsideScene extends BaseScene {
         popupSize: { width: 500, height: 500 },
         clickAreas: [{
           x: width / 2,       // TODO: paper2 위치 조정
-          y: height / 2.5,
+          y: height / 1.7,
           width: 100,
           height: 100,
           debugAlpha: 0,
