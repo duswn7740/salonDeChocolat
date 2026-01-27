@@ -27,8 +27,21 @@ export default class CabinInsideScene extends BaseScene {
       weight: false,       // 무게추 (1번 서랍)
       chocolate: false,    // 초콜릿 (1번 서랍)
       match: false,        // 성냥 (2번 서랍)
-      beaker: false        // 비커 (2번 서랍)
+      beaker: false,       // 비커 (2번 서랍)
+      // 책장 퍼즐 상태
+      bookAdded: false,    // book 아이템으로 book4 추가했는지
+      bookPuzzleSolved: false,  // 퍼즐 완료 여부
+      paper2: false        // paper2 획득 여부
     };
+
+    // 책장 퍼즐 상태 (현재 책 배열)
+    // 정답: [1, 2, 3, 4, 5] (M-O-C-H-A)
+    // 초기 상태: book4 없이 [3, 1, 5, 2] -> book4 추가 후 [3, 1, 5, 2, 4]
+    this.bookOrder = window.cabinInsideBookOrder ||
+      (this.sceneState.bookAdded ? [3, 1, 5, 2, 4] : [3, 1, 5, 2]);
+
+    // 퍼즐용 선택된 책 인덱스
+    this.selectedBookIndex = null;
   }
 
   create() {
@@ -58,25 +71,25 @@ export default class CabinInsideScene extends BaseScene {
       height * 0.33,
       200, 60,
       () => this.showDrawerPopup(),
-      0.3  // 디버그용
+      0  // 디버그용
     );
 
     // 2. 책장 영역
     this.bookshelfArea = createClickArea(this,
-      width * 0.7,    // TODO: 위치 조정
-      height * 0.5,
-      150, 250,
+      width * 0.22,    // TODO: 위치 조정
+      height * 0.45,
+      200, 60,
       () => this.showBookshelfPopup(),
       0  // 디버그용
     );
 
     // 3. 부엌으로 이동
     this.kitchenArea = createClickArea(this,
-      width * 0.85,   // TODO: 위치 조정
-      height * 0.7,
-      100, 150,
+      width * 0.3,   // TODO: 위치 조정
+      height * 0.59,
+      250, 60,
       () => this.goToKitchen(),
-      0  // 디버그용
+      0, 0x00ff00  // 디버그용
     );
 
     // 4. 되돌아가기 영역 (외부로)
@@ -195,7 +208,7 @@ export default class CabinInsideScene extends BaseScene {
       y: height / 2.3,
       width: 300,
       height: 80,
-      debugAlpha: 0.3,
+      debugAlpha: 0,
       callback: () => this.toggleDrawer1()
     });
 
@@ -207,7 +220,7 @@ export default class CabinInsideScene extends BaseScene {
           y: height / 2.4,    // 서랍보다 살짝 위
           width: 150,
           height: 150,
-          debugAlpha: 0.3,
+          debugAlpha: 0,
           callback: (popupScene) => this.collectDrawerItem(popupScene, 'weight')
         });
       }
@@ -217,7 +230,7 @@ export default class CabinInsideScene extends BaseScene {
           y: height / 2.6,
           width: 150,
           height: 150,
-          debugAlpha: 0.3,
+          debugAlpha: 0,
           callback: (popupScene) => this.collectDrawerItem(popupScene, 'chocolate')
         });
       }
@@ -229,7 +242,7 @@ export default class CabinInsideScene extends BaseScene {
       y: height / 2,
       width: 300,
       height: 80,
-      debugAlpha: 0.3,
+      debugAlpha: 0,
       callback: (popupScene) => this.toggleDrawer(popupScene, 2)
     });
 
@@ -241,7 +254,7 @@ export default class CabinInsideScene extends BaseScene {
           y: height / 1.85,
           width: 100,
           height: 100,
-          debugAlpha: 0.3,
+          debugAlpha: 0,
           callback: (popupScene) => this.collectDrawerItem(popupScene, 'match')
         });
       }
@@ -251,7 +264,7 @@ export default class CabinInsideScene extends BaseScene {
           y: height / 2.1,
           width: 100,
           height: 100,
-          debugAlpha: 0.3,
+          debugAlpha: 0,
           callback: (popupScene) => this.collectDrawerItem(popupScene, 'beaker')
         });
       }
@@ -263,7 +276,7 @@ export default class CabinInsideScene extends BaseScene {
       y: height / 1.6,
       width: 300,
       height: 80,
-      debugAlpha: 0.3,
+      debugAlpha: 0,
       callback: (popupScene) => this.toggleDrawer(popupScene, 3)
     });
 
@@ -342,19 +355,216 @@ export default class CabinInsideScene extends BaseScene {
 
   // ========== 책장 팝업 ==========
   showBookshelfPopup() {
+    const { width, height } = this.cameras.main;
     this.activeArea = 'bookshelf';
     this.disableAllAreas();
 
-    // TODO: 책장 팝업 구현
+    // paper2 획득 후 -> bookshelf_before (정렬된 책 오버레이, 클릭 영역 없음)
+    if (this.sceneState.paper2) {
+      this.scene.launch('PopupScene', {
+        popupImage: 'bookshelf_before',
+        popupSize: { width: 500, height: 500 },
+        clickAreas: [],
+        overlayItems: this.getBookshelfOverlayItems(true),  // 정렬된 상태
+        onClose: () => {
+          this.enableAllAreas();
+          this.activeArea = null;
+        }
+      });
+      return;
+    }
+
+    // 퍼즐 완료 -> bookshelf_after (paper2 클릭 가능)
+    if (this.sceneState.bookPuzzleSolved) {
+      this.scene.launch('PopupScene', {
+        popupImage: 'bookshelf_after',
+        popupSize: { width: 500, height: 500 },
+        clickAreas: [{
+          x: width / 2,       // TODO: paper2 위치 조정
+          y: height / 2.5,
+          width: 100,
+          height: 100,
+          debugAlpha: 0,
+          callback: () => this.collectPaper2()
+        }],
+        overlayItems: this.getBookshelfOverlayItems(true),  // 정렬된 책 표시
+        onClose: () => {
+          this.enableAllAreas();
+          this.activeArea = null;
+        }
+      });
+      return;
+    }
+
+    // book4 미추가 상태 -> book 아이템 사용 필요
+    if (!this.sceneState.bookAdded) {
+      // book 없이 클릭 -> 힌트 또는 book 사용
+      this.scene.launch('PopupScene', {
+        popupImage: 'bookshelf_before',
+        popupSize: { width: 500, height: 500 },
+        clickAreas: [{
+          x: width / 2,
+          y: height / 2,
+          width: 400,
+          height: 300,
+          debugAlpha: 0,
+          callback: () => this.tryAddBook()
+        }],
+        overlayItems: this.getBookshelfOverlayItems(false),  // 4권만 표시
+        onClose: () => {
+          this.enableAllAreas();
+          this.activeArea = null;
+        }
+      });
+      return;
+    }
+
+    // 퍼즐 진행 중 -> 책 클릭하여 자리바꾸기
     this.scene.launch('PopupScene', {
-      popupImage: 'bookshelf',
+      popupImage: 'bookshelf_before',
       popupSize: { width: 500, height: 500 },
-      clickAreas: [],
+      clickAreas: this.getBookClickAreas(),
+      overlayItems: this.getBookshelfOverlayItems(false),
       onClose: () => {
         this.enableAllAreas();
         this.activeArea = null;
+        this.selectedBookIndex = null;  // 선택 해제
       }
     });
+  }
+
+  // 책장 위에 표시할 책 오버레이
+  getBookshelfOverlayItems(isSolved) {
+    const { width, height } = this.cameras.main;
+    const items = [];
+
+    // 책 위치 (5개 슬롯)
+    const bookPositions = [
+      { x: width / 2 - 120, y: height / 2 },   // 슬롯 0
+      { x: width / 2 - 60, y: height / 2 },    // 슬롯 1
+      { x: width / 2, y: height / 2 },          // 슬롯 2
+      { x: width / 2 + 60, y: height / 2 },    // 슬롯 3
+      { x: width / 2 + 120, y: height / 2 }    // 슬롯 4
+    ];
+
+    const order = isSolved ? [1, 2, 3, 4, 5] : this.bookOrder;
+
+    order.forEach((bookNum, index) => {
+      if (bookNum) {  // bookNum이 있을 때만 표시
+        items.push({
+          key: `book${bookNum}_overlay`,
+          x: bookPositions[index].x,
+          y: bookPositions[index].y
+        });
+      }
+    });
+
+    return items;
+  }
+
+  // 책 클릭 영역 생성 (퍼즐용)
+  getBookClickAreas() {
+    const { width, height } = this.cameras.main;
+    const clickAreas = [];
+
+    // 책 위치 (5개 슬롯)
+    const bookPositions = [
+      { x: width / 2 - 120, y: height / 2 },
+      { x: width / 2 - 60, y: height / 2 },
+      { x: width / 2, y: height / 2 },
+      { x: width / 2 + 60, y: height / 2 },
+      { x: width / 2 + 120, y: height / 2 }
+    ];
+
+    this.bookOrder.forEach((bookNum, index) => {
+      if (bookNum) {
+        clickAreas.push({
+          x: bookPositions[index].x,
+          y: bookPositions[index].y,
+          width: 50,
+          height: 150,
+          debugAlpha: 0,
+          highlight: this.selectedBookIndex === index,  // 선택된 책 하이라이트
+          callback: () => this.onBookClick(index)
+        });
+      }
+    });
+
+    return clickAreas;
+  }
+
+  // 책 클릭 처리
+  onBookClick(index) {
+    if (this.selectedBookIndex === null) {
+      // 첫 번째 책 선택
+      this.selectedBookIndex = index;
+    } else if (this.selectedBookIndex === index) {
+      // 같은 책 다시 클릭 -> 선택 해제
+      this.selectedBookIndex = null;
+    } else {
+      // 두 번째 책 선택 -> 자리 바꾸기
+      const temp = this.bookOrder[this.selectedBookIndex];
+      this.bookOrder[this.selectedBookIndex] = this.bookOrder[index];
+      this.bookOrder[index] = temp;
+      this.selectedBookIndex = null;
+      this.saveBookOrder();
+
+      // 정답 체크
+      if (this.checkBookPuzzleSolved()) {
+        this.sceneState.bookPuzzleSolved = true;
+        this.saveState();
+      }
+    }
+
+    // 팝업 갱신
+    this.scene.stop('PopupScene');
+    this.showBookshelfPopup();
+  }
+
+  // 퍼즐 정답 체크
+  checkBookPuzzleSolved() {
+    const answer = [1, 2, 3, 4, 5];
+    return this.bookOrder.length === 5 &&
+      this.bookOrder.every((val, idx) => val === answer[idx]);
+  }
+
+  // paper2 획득
+  collectPaper2() {
+    this.sceneState.paper2 = true;
+    this.saveState();
+
+    this.addItem({
+      id: 'paper2',
+      name: '종이조각2',
+      image: 'assets/images/items/paper2.png'
+    });
+
+    // 정렬된 책장으로 전환
+    this.scene.stop('PopupScene');
+    this.showBookshelfPopup();
+  }
+
+  // 책 순서 저장
+  saveBookOrder() {
+    window.cabinInsideBookOrder = this.bookOrder;
+  }
+
+  // book 아이템으로 book4 추가 시도
+  tryAddBook() {
+    if (this.checkSelectedItem('book')) {
+      // book 사용하여 book4 추가
+      this.sceneState.bookAdded = true;
+      this.bookOrder = [3, 1, 5, 2, 4];  // book4 추가
+      this.saveState();
+      this.saveBookOrder();
+      this.removeItem('book');
+
+      // 팝업 재실행 (퍼즐 모드로)
+      this.scene.stop('PopupScene');
+      this.showBookshelfPopup();
+    } else {
+      this.showHintDialog('책 한 권이 모자라...');
+    }
   }
 
   // ========== 씬 이동 ==========

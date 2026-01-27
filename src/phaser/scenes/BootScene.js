@@ -90,6 +90,24 @@ export default class BootScene extends Phaser.Scene {
 
     // Cabin Inside 배경 및 팝업 이미지
     this.load.image('cabin_inside', 'assets/images/backgrounds/cabin_inside.png');
+    this.load.image('kitchen', 'assets/images/backgrounds/kitchen.png');
+
+    // Kitchen 팝업 이미지
+    this.load.image('sideboard_before', 'assets/images/popup/sideboard_before.png');
+    this.load.image('sideboard_after', 'assets/images/popup/sideboard_after.png');
+    this.load.image('fridge_locked', 'assets/images/popup/fridge_locked.png');
+    this.load.image('fridge_milk', 'assets/images/popup/fridge_milk.png');
+    this.load.image('fridge_opened', 'assets/images/popup/fridge_opened.png');
+    this.load.image('table_before', 'assets/images/popup/table_before.png');
+    this.load.image('table_after', 'assets/images/popup/table_after.png');
+    this.load.image('worktable', 'assets/images/popup/worktable.png');
+
+    // Kitchen 오버레이 이미지
+    this.load.image('ox_o', 'assets/images/popup/ox_o.png');
+    this.load.image('ox_x', 'assets/images/popup/ox_x.png');
+    this.load.image('book_overlay', 'assets/images/popup/book_overlay.png');
+
+    // Cabin Inside 팝업 이미지
     this.load.image('drawer_all_closed', 'assets/images/popup/drawer_all_closed.png');
     this.load.image('drawer_1_open', 'assets/images/popup/drawer_1_open.png');
     this.load.image('drawer_2_open', 'assets/images/popup/drawer_2_open.png');
@@ -98,7 +116,15 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('drawer_13_open', 'assets/images/popup/drawer_13_open.png');
     this.load.image('drawer_23_open', 'assets/images/popup/drawer_23_open.png');
     this.load.image('drawer_all_opened', 'assets/images/popup/drawer_all_opened.png');
-    this.load.image('bookshelf', 'assets/images/popup/bookshelf.png');
+    this.load.image('bookshelf_before', 'assets/images/popup/bookshelf_before.png');
+    this.load.image('bookshelf_after', 'assets/images/popup/bookshelf_after.png');
+
+    // 책 오버레이 이미지 (M-O-C-H-A)
+    this.load.image('book1_overlay', 'assets/images/popup/book1_overlay.png');  // M
+    this.load.image('book2_overlay', 'assets/images/popup/book2_overlay.png');  // O
+    this.load.image('book3_overlay', 'assets/images/popup/book3_overlay.png');  // C
+    this.load.image('book4_overlay', 'assets/images/popup/book4_overlay.png');  // H
+    this.load.image('book5_overlay', 'assets/images/popup/book5_overlay.png');  // A
 
     // 서랍 오버레이 아이템 이미지 (서랍 위에 표시)
     this.load.image('weight_overlay', 'assets/images/popup/weight_overlay.png');
@@ -123,6 +149,10 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('chocolate', 'assets/images/items/chocolate.png');
     this.load.image('match', 'assets/images/items/match.png');
     this.load.image('beaker', 'assets/images/items/beaker.png');
+    this.load.image('book', 'assets/images/items/book.png');
+    this.load.image('paper2', 'assets/images/items/paper2.png');
+    this.load.image('paper3', 'assets/images/items/paper3.png');
+    this.load.image('milk', 'assets/images/items/milk.png');
   }
 
   create() {
@@ -130,7 +160,7 @@ export default class BootScene extends Phaser.Scene {
     this.time.delayedCall(500, () => {
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start('CabinInsideScene');  // 테스트용 (원래: 'TitleScene')
+        this.scene.start('TitleScene');  // 테스트용 (원래: 'TitleScene')
       });
     });
   }
