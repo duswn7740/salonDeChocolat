@@ -22,7 +22,7 @@ export default class KitchenScene extends BaseScene {
       paper3: false,
       // 냉장고
       fridgeUnlocked: false,  // pendant로 잠금 해제
-      milk: false,
+      fresh_cream: false,
       // 식탁
       tablePuzzleSolved: false,
       book: false
@@ -68,7 +68,7 @@ export default class KitchenScene extends BaseScene {
       0  // 디버그용
     );
 
-    // 2. 냉장고 영역 (pendant로 잠금해제 + milk 획득)
+    // 2. 냉장고 영역 (pendant로 잠금해제 + fresh_cream 획득)
     this.fridgeArea = createClickArea(this,
       width * 0.2,    // TODO: 위치 조정
       height * 0.58,
@@ -145,14 +145,14 @@ export default class KitchenScene extends BaseScene {
     popupScene.removeClickAreas();
   }
 
-  // ========== 냉장고 팝업 (pendant -> milk) ==========
+  // ========== 냉장고 팝업 (pendant -> fresh_cream) ==========
   showFridgePopup() {
     const { width, height } = this.cameras.main;
     this.activeArea = 'fridge';
     this.disableAllAreas();
 
-    // milk 획득 완료
-    if (this.collectedItems.milk) {
+    // fresh_cream 획득 완료
+    if (this.collectedItems.fresh_cream) {
       this.scene.launch('PopupScene', {
         popupImage: 'fridge_opened',
         popupSize: { width: 500, height: 500 },
@@ -165,18 +165,18 @@ export default class KitchenScene extends BaseScene {
       return;
     }
 
-    // 잠금 해제됨 -> milk 획득 가능
+    // 잠금 해제됨 -> fresh_cream 획득 가능
     if (this.collectedItems.fridgeUnlocked) {
       this.scene.launch('PopupScene', {
-        popupImage: 'fridge_milk',
+        popupImage: 'fridge_fresh_cream',
         popupSize: { width: 500, height: 500 },
         clickAreas: [{
-          x: width / 2.3,       // TODO: milk 위치 조정
+          x: width / 2.3,       // TODO: fresh_cream 위치 조정
           y: height / 1.6,
           width: 150,
           height: 60,
           debugAlpha: 0,
-          callback: (popupScene) => this.collectMilk(popupScene)
+          callback: (popupScene) => this.collectFresh_cream(popupScene)
         }],
         onClose: () => {
           this.enableAllAreas();
@@ -212,7 +212,7 @@ export default class KitchenScene extends BaseScene {
       this.saveState();
       this.removeItem('pendant');
 
-      // 팝업 재실행 (fridge_milk로)
+      // 팝업 재실행 (fridge_fresh_cream로)
       this.scene.stop('PopupScene');
       this.showFridgePopup();
     } else {
@@ -224,14 +224,14 @@ export default class KitchenScene extends BaseScene {
     }
   }
 
-  collectMilk(popupScene) {
-    this.collectedItems.milk = true;
+  collectFresh_cream(popupScene) {
+    this.collectedItems.fresh_cream = true;
     this.saveState();
 
     this.addItem({
-      id: 'milk',
+      id: 'fresh_cream',
       name: '우유',
-      image: 'assets/images/items/milk.png'
+      image: 'assets/images/items/fresh_cream.png'
     });
 
     popupScene.changePopupImage('fridge_opened');

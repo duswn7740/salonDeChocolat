@@ -14,9 +14,16 @@ export default class PathScene extends BaseScene {
     // 아이템 획득 상태 (씬 재방문 시에도 유지하려면 window나 별도 저장소 사용)
     this.collectedItems = window.pathSceneCollectedItems || {
       signpost: false,
-      stump: false,
+      stump: false,           // strong_woodstick 획득
+      woodstickPlaced: false, // stump 위에 나뭇가지 올림
+      firewood: false,        // 장작 획득 완료
       rock: false,
       bush: false
+    };
+
+    // 힌트 메시지 인덱스 (순환용)
+    this.hintIndex = window.pathSceneHintIndex || {
+      stump: 0
     };
   }
 
@@ -152,24 +159,7 @@ export default class PathScene extends BaseScene {
           }
         ]
       },
-      stump: {
-        popupImage: isCollected ? 'stump_after' : 'stump_before',
-        popupImageAfter: isCollected ? null : 'stump_after',
-        popupSize: { width: 500, height: 500 },
-        clickAreas: isCollected ? [] : [
-          {
-            x: width / 2,
-            y: height / 2.3,
-            width: 150,
-            height: 150,
-            debugColor: 0x00ff00,
-            debugAlpha: 0,
-            callback: (popupScene) => {
-              this.onPopupItemClick(popupScene, 'stump');
-            }
-          }
-        ]
-      },
+      stump: this.getStumpPopupConfig(width, height),
       rock: {
         popupImage: isCollected ? 'rock_after' : 'rock_before',
         popupImageAfter: isCollected ? null : 'rock_after',
@@ -217,6 +207,130 @@ export default class PathScene extends BaseScene {
         this.activeArea = null;
       }
     });
+  }
+
+  // ========== Stump 팝업 설정 (3단계) ==========
+  getStumpPopupConfig(width, height) {
+    // 3단계: 장작 획득 완료
+    if (this.collectedItems.firewood) {
+      return {
+        popupImage: 'stump_after',
+        popupSize: { width: 500, height: 500 },
+        clickAreas: []
+      };
+    }
+
+    // 2단계: 나뭇가지 올려진 상태 → 도끼 사용 → 장작 획득
+    if (this.collectedItems.woodstickPlaced) {
+      return {
+        popupImage: 'stump_after',
+        popupSize: { width: 500, height: 500 },
+        overlayItems: [{
+          key: 'strong_woodstick',
+          x: width / 3.1,
+          y: height / 2.2,
+          scale: 0.4
+        }],
+        clickAreas: [{
+          x: width / 3.2,
+          y: height / 2.2,
+          width: 200,
+          height: 100,
+          debugColor: 0xff0000,
+          debugAlpha: 0,
+          callback: () => this.tryChopWood()
+        }]
+      };
+    }
+
+    // 1단계: 나뭇가지 획득 완료 → 나뭇가지 올리기 가능
+    if (this.collectedItems.stump) {
+      return {
+        popupImage: 'stump_after',
+        popupSize: { width: 500, height: 500 },
+        clickAreas: [{
+          x: width / 3.2,
+          y: height / 2.2,
+          width: 200,
+          height: 100,
+          debugColor: 0x00ff00,
+          debugAlpha: 0.3,
+          callback: () => this.tryPlaceWoodstick()
+        }]
+      };
+    }
+
+    // 0단계: 나뭇가지 획득 전
+    return {
+      popupImage: 'stump_before',
+      popupImageAfter: 'stump_after',
+      popupSize: { width: 500, height: 500 },
+      clickAreas: [{
+        x: width / 2,
+        y: height / 2.3,
+        width: 150,
+        height: 150,
+        debugColor: 0x0000ff,
+        debugAlpha: 0,
+        callback: (popupScene) => {
+          this.onPopupItemClick(popupScene, 'stump');
+        }
+      }]
+    };
+  }
+
+  // 나뭇가지 올리기 시도
+  tryPlaceWoodstick() {
+    if (this.checkSelectedItem('strong_woodstick')) {
+      this.collectedItems.woodstickPlaced = true;
+      window.pathSceneCollectedItems = this.collectedItems;
+      this.removeItem('strong_woodstick');
+
+      // 팝업 재실행 (overlay 표시)
+      this.scene.stop('PopupScene');
+      this.showPopup('stump');
+    } else {
+      const hints = [
+        '뭔가 올려놓을 수 있을 것 같아...',
+        '튼튼한 나뭇가지가 있으면...'
+      ];
+      this.showRotatingHint('stump', hints);
+    }
+  }
+
+  // 도끼로 장작 만들기 시도
+  tryChopWood() {
+    if (this.checkSelectedItem('axe')) {
+      this.collectedItems.firewood = true;
+      window.pathSceneCollectedItems = this.collectedItems;
+      this.removeItem('axe');
+
+      // 장작 아이템 추가
+      window.dispatchEvent(new CustomEvent('addItem', {
+        detail: {
+          id: 'firewood',
+          name: '장작',
+          image: 'assets/images/items/firewood.png'
+        }
+      }));
+
+      // 팝업 재실행 (overlay 제거)
+      this.scene.stop('PopupScene');
+      this.showPopup('stump');
+    } else {
+      this.showHintDialog('이걸로는 자를 수 없어...');
+    }
+  }
+
+  // 순환 힌트 메시지 표시
+  showRotatingHint(key, hints) {
+    const currentIndex = this.hintIndex[key] || 0;
+    const message = hints[currentIndex];
+
+    this.hintIndex[key] = (currentIndex + 1) % hints.length;
+    window.pathSceneHintIndex = this.hintIndex;
+
+    this.showHintDialog(message);
   }
 
   // 팝업 내 아이템 클릭 시

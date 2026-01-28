@@ -68,6 +68,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('signpost_after', 'assets/images/popup/signpost_after.png');
     this.load.image('stump_before', 'assets/images/popup/stump_before.png');
     this.load.image('stump_after', 'assets/images/popup/stump_after.png');
+    this.load.image('woodstick_on_stump', 'assets/images/popup/woodstick_on_stump.png');
     this.load.image('rock_before', 'assets/images/popup/rock_before.png');
     this.load.image('rock_after', 'assets/images/popup/rock_after.png');
     this.load.image('bush_before', 'assets/images/popup/bush_before.png');
@@ -96,7 +97,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('sideboard_before', 'assets/images/popup/sideboard_before.png');
     this.load.image('sideboard_after', 'assets/images/popup/sideboard_after.png');
     this.load.image('fridge_locked', 'assets/images/popup/fridge_locked.png');
-    this.load.image('fridge_milk', 'assets/images/popup/fridge_milk.png');
+    this.load.image('fridge_fresh_cream', 'assets/images/popup/fridge_fresh_cream.png');
     this.load.image('fridge_opened', 'assets/images/popup/fridge_opened.png');
     this.load.image('table_before', 'assets/images/popup/table_before.png');
     this.load.image('table_after', 'assets/images/popup/table_after.png');
@@ -142,6 +143,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('pendant', 'assets/images/items/pendant.png');
     this.load.image('rake', 'assets/images/items/rake.png');
     this.load.image('straw', 'assets/images/items/straw.png');
+    this.load.image('firewood', 'assets/images/items/firewood.png');
     this.load.image('gear', 'assets/images/items/gear.png');
     this.load.image('blue_key', 'assets/images/items/blue_key.png');
     this.load.image('tweezers', 'assets/images/items/tweezers.png');
@@ -152,7 +154,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('book', 'assets/images/items/book.png');
     this.load.image('paper2', 'assets/images/items/paper2.png');
     this.load.image('paper3', 'assets/images/items/paper3.png');
-    this.load.image('milk', 'assets/images/items/milk.png');
+    this.load.image('fresh_cream', 'assets/images/items/fresh_cream.png');
   }
 
   create() {
@@ -160,7 +162,7 @@ export default class BootScene extends Phaser.Scene {
     this.time.delayedCall(500, () => {
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start('TitleScene');  // 테스트용 (원래: 'TitleScene')
+        this.scene.start('KitchenScene');  // 테스트용 (원래: 'TitleScene')
       });
     });
   }
