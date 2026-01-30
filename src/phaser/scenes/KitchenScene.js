@@ -48,9 +48,10 @@ export default class KitchenScene extends BaseScene {
       weightsOnTable: [3, 5, 8],  // 책상 위 추들 (6g는 weight 아이템 사용 시 추가)
       measuredChocolateCollected: false,  // 계량 초콜릿 획득
       // 비커 퍼즐 (overlay 방식)
-      beakerAdded: false,         // beaker 아이템 사용 여부 (5ml 비커 추가)
-      creamUsed: false,           // fresh_cream 아이템 사용 여부 (12ml에 우유 채움)
-      beakerState: { b5: 0, b7: 0, b12: 0 },  // 각 비커의 현재 용량
+      beakerAdded: false,         // beaker 아이템 사용 여부 (7ml 비커 추가)
+      creamUsed: false,           // fresh_cream 아이템 사용 여부
+      // 퍼즐 상태: fresh_cream(무제한), 5ml, 7ml, 12ml 비커
+      beakerState: { b5: 0, b7: 0, b12: 0 },  // 각 비커의 현재 용량 (cream은 무제한이므로 상태 불필요)
       measuredCreamCollected: false  // 계량 우유 획득
     };
     // 기존 상태와 기본값 병합 (새 프로퍼티 누락 방지)
@@ -598,8 +599,8 @@ export default class KitchenScene extends BaseScene {
     const { width, height } = this.cameras.main;
     const items = [];
 
-    // 초콜릿이 올려진 경우에만 무게추 표시
-    if (this.worktableState.chocolateOnScale) {
+    // 초콜릿과 무게추 아이템 둘 다 사용한 경우에만 무게추 표시
+    if (this.worktableState.chocolateOnScale && this.worktableState.weightAdded) {
       // 저울 위 무게추 위치 (화면 위쪽)
       const scaleWeightPositions = {
         3: { x: width / 4, y: height / 2.5 },
@@ -652,8 +653,8 @@ export default class KitchenScene extends BaseScene {
     const { width, height } = this.cameras.main;
     const clickAreas = [];
 
-    // 초콜릿이 올려진 후에만 무게추 이동 가능
-    if (this.worktableState.chocolateOnScale) {
+    // 초콜릿과 무게추 아이템 둘 다 사용한 경우에만 무게추 이동 가능
+    if (this.worktableState.chocolateOnScale && this.worktableState.weightAdded) {
       // 저울 위 무게추 위치 (클릭하면 책상으로 이동) - 화면 위쪽
       const scaleWeightPositions = {
         3: { x: width / 4, y: height / 2.5 },
@@ -703,16 +704,16 @@ export default class KitchenScene extends BaseScene {
 
     // 저울 빈 공간: weight/chocolate 아이템 추가
     clickAreas.push({
-      x: width / 1.5,
+      x: width / 2,
       y: height / 2,
-      width: 150,
+      width: 300,
       height: 150,
       debugAlpha: 0.3,
       callback: () => this.onScaleClick()
     });
 
-    // 확인 버튼 (초콜릿이 올려진 경우에만 활성화)
-    if (this.worktableState.chocolateOnScale) {
+    // 확인 버튼 (초콜릿과 무게추 둘 다 사용한 경우에만 활성화)
+    if (this.worktableState.chocolateOnScale && this.worktableState.weightAdded) {
       clickAreas.push({
         x: width / 2,
         y: height / 1.4,
@@ -781,8 +782,12 @@ export default class KitchenScene extends BaseScene {
     }
 
     // 힌트 표시
-    if (!this.worktableState.chocolateOnScale) {
+    if (!this.worktableState.chocolateOnScale && !this.worktableState.weightAdded) {
+      this.showHintDialog('초콜릿과 무게추가 필요해...');
+    } else if (!this.worktableState.chocolateOnScale) {
       this.showHintDialog('초콜릿을 올려야 해...');
+    } else if (!this.worktableState.weightAdded) {
+      this.showHintDialog('무게추가 필요해...');
     }
   }
 
@@ -815,11 +820,17 @@ export default class KitchenScene extends BaseScene {
   showBeakerPuzzlePopup() {
     const { width, height } = this.cameras.main;
 
-    // 계량 우유 이미 획득한 경우
+    // 계량 우유 이미 획득한 경우 (생크림, 5ml_0, 7ml_0, 12ml_0 overlay 표시)
     if (this.worktableState.measuredCreamCollected) {
       this.scene.launch('PopupScene', {
-        popupImage: 'beaker_puzzle_empty',
+        popupImage: 'beaker_puzzle',
         popupSize: { width: 500, height: 500 },
+        overlayItems: [
+          { key: 'fresh_cream_overlay', x: width / 4, y: height / 2 },
+          { key: 'beaker_5ml_0', x: width / 3, y: height / 2 },
+          { key: 'beaker_7ml_0', x: width / 2, y: height / 2 },
+          { key: 'beaker_12ml_0', x: width / 1.5, y: height / 2 }
+        ],
         clickAreas: [],
         onClose: () => {
           this.showWorktablePopup(true);
@@ -828,8 +839,7 @@ export default class KitchenScene extends BaseScene {
       return;
     }
 
-    // 단계 1: fresh_cream과 beaker 둘 다 필요
-    // beaker_puzzle에는 7ml, 12ml 비커만 있음
+    // 아이템 사용 단계: fresh_cream과 beaker 둘 다 필요
     if (!this.worktableState.beakerAdded || !this.worktableState.creamUsed) {
       this.scene.launch('PopupScene', {
         popupImage: 'beaker_puzzle',
@@ -850,7 +860,8 @@ export default class KitchenScene extends BaseScene {
       return;
     }
 
-    // 단계 2: 퍼즐 진행 중 (5ml, 7ml, 12ml 비커 모두 표시)
+    // 퍼즐 진행 중 (fresh_cream(무제한), 5ml, 7ml, 12ml 비커 모두 표시)
+
     this.scene.launch('PopupScene', {
       popupImage: 'beaker_puzzle',
       popupSize: { width: 500, height: 500 },
@@ -862,21 +873,31 @@ export default class KitchenScene extends BaseScene {
     });
   }
 
-  // 초기 비커 overlay (7ml, 12ml만 표시 - 아이템 사용 전)
+  // 초기 비커 overlay (아이템 사용 전: 5ml, 12ml 비커 + 사용된 아이템 표시)
   getInitialBeakerOverlays() {
     const { width, height } = this.cameras.main;
     const items = [];
 
-    // 7ml, 12ml 비커만 표시 (아이템 사용 전)
-    items.push({ key: 'beaker_7ml_0', x: width / 2, y: height / 2 });
+    // 기본: 5ml, 12ml 비커 (빈 상태)
+    items.push({ key: 'beaker_5ml_0', x: width / 3, y: height / 2 });
     items.push({ key: 'beaker_12ml_0', x: width / 1.5, y: height / 2 });
+
+    // 생크림 사용 시: fresh_cream_overlay 표시
+    if (this.worktableState.creamUsed) {
+      items.push({ key: 'fresh_cream_overlay', x: width / 4, y: height / 2 });
+    }
+
+    // beaker 아이템 사용 시: 7ml 비커 추가
+    if (this.worktableState.beakerAdded) {
+      items.push({ key: 'beaker_7ml_0', x: width / 2, y: height / 2 });
+    }
 
     return items;
   }
 
-  // 비커 아이템과 우유 사용 시도
+  // 비커 아이템과 생크림 사용 시도
   tryAddBeakerItems() {
-    // beaker 아이템으로 5ml 비커 추가
+    // beaker 아이템으로 7ml 비커 추가
     if (!this.worktableState.beakerAdded && this.checkSelectedItem('beaker')) {
       this.worktableState.beakerAdded = true;
       this.saveWorktableState();
@@ -887,10 +908,9 @@ export default class KitchenScene extends BaseScene {
       return;
     }
 
-    // fresh_cream 아이템으로 12ml 비커에 우유 채움
+    // fresh_cream 아이템 사용 (퍼즐 시작 시 cream 용기에 12ml)
     if (!this.worktableState.creamUsed && this.checkSelectedItem('fresh_cream')) {
       this.worktableState.creamUsed = true;
-      this.worktableState.beakerState = { b5: 0, b7: 0, b12: 12 };
       this.saveWorktableState();
       this.removeItem('fresh_cream');
 
@@ -901,22 +921,22 @@ export default class KitchenScene extends BaseScene {
 
     // 힌트 표시
     if (!this.worktableState.beakerAdded && !this.worktableState.creamUsed) {
-      this.showHintDialog('비커와 우유가 필요해...');
+      this.showHintDialog('비커와 생크림이 필요해...');
     } else if (!this.worktableState.beakerAdded) {
       this.showHintDialog('비커가 필요해...');
     } else {
-      this.showHintDialog('우유가 필요해...');
+      this.showHintDialog('생크림이 필요해...');
     }
   }
 
-  // 비커 상태에 따른 overlay 아이템 반환 (생크림, 5ml, 7ml, 12ml 순서)
+  // 비커 상태에 따른 overlay 아이템 반환 (fresh_cream(무제한), 5ml, 7ml, 12ml 순서)
   getBeakerOverlayItems() {
     const { width, height } = this.cameras.main;
     const { b5, b7, b12 } = this.worktableState.beakerState;
     const items = [];
 
-    // 생크림 (이미 사용했으면 표시 안함)
-    // 퍼즐 진행 중에는 생크림이 이미 사용된 상태이므로 표시 안함
+    // fresh_cream (무제한) - 항상 표시
+    items.push({ key: `fresh_cream_overlay`, x: width / 4, y: height / 2 });
 
     // 5ml, 7ml, 12ml 비커 순서대로 배치
     items.push({ key: `beaker_5ml_${this.getClosestBeakerValue(b5, [0, 3, 5])}`, x: width / 3, y: height / 2 });
@@ -933,11 +953,20 @@ export default class KitchenScene extends BaseScene {
     );
   }
 
-  // 비커 클릭 영역 (5ml, 7ml, 12ml, 하수구 순서)
+  // 비커 클릭 영역 (fresh_cream(무제한), 5ml, 7ml, 12ml, 하수구, 측정완료 버튼)
   getBeakerClickAreas() {
     const { width, height } = this.cameras.main;
 
-    return [
+    const clickAreas = [
+      // fresh_cream (무제한 - 클릭하면 비커에 채움)
+      {
+        x: width / 4,
+        y: height / 2,
+        width: 80,
+        height: 150,
+        debugAlpha: 0.3,
+        callback: () => this.selectCream()
+      },
       // 5ml 비커
       {
         x: width / 3,
@@ -967,14 +996,38 @@ export default class KitchenScene extends BaseScene {
       },
       // 하수구 (선택된 비커의 내용물 버리기)
       {
-        x: width / 2,
-        y: height / 1.25,
-        width: 120,
-        height: 60,
+        x: width / 1.2,
+        y: height / 1.8,
+        width: 100,
+        height: 30,
         debugAlpha: 0.3,
         callback: () => this.drainBeaker()
+      },
+      // 측정 완료 버튼
+      {
+        x: width / 2,
+        y: height / 1.3,
+        width: 120,
+        height: 50,
+        debugAlpha: 0.3,
+        callback: () => this.tryCompleteMeasurement()
       }
     ];
+
+    return clickAreas;
+  }
+
+  // 생크림 선택 (무제한이므로 비커를 가득 채움)
+  selectCream() {
+    if (this.selectedBeaker) {
+      // 이미 비커가 선택되어 있으면 -> 생크림으로 옮기려는 것 (불가)
+      this.showHintDialog('생크림으로는 옮길 수 없어...');
+      this.selectedBeaker = null;
+      return;
+    }
+    // 생크림 선택 -> 다음에 클릭하는 비커를 가득 채움
+    this.selectedBeaker = 'cream';
+    this.showHintDialog('비커를 선택해서 채워...');
   }
 
   // 비커 선택 (선택 후 다른 비커 클릭하면 옮기기)
@@ -983,6 +1036,10 @@ export default class KitchenScene extends BaseScene {
       // 첫 번째 선택
       this.selectedBeaker = beakerKey;
       this.showHintDialog('다른 비커나 하수구를 선택...');
+    } else if (this.selectedBeaker === 'cream') {
+      // 생크림이 선택된 상태 -> 비커를 가득 채움
+      this.fillBeakerFromCream(beakerKey);
+      this.selectedBeaker = null;
     } else if (this.selectedBeaker === beakerKey) {
       // 같은 비커 다시 클릭 -> 선택 해제
       this.selectedBeaker = null;
@@ -991,6 +1048,21 @@ export default class KitchenScene extends BaseScene {
       this.pourBeaker(this.selectedBeaker, beakerKey);
       this.selectedBeaker = null;
     }
+  }
+
+  // 생크림에서 비커로 가득 채우기
+  fillBeakerFromCream(beakerKey) {
+    const capacities = { b5: 5, b7: 7, b12: 12 };
+    const state = this.worktableState.beakerState;
+    const capacity = capacities[beakerKey];
+
+    // 비커를 가득 채움
+    state[beakerKey] = capacity;
+    this.saveWorktableState();
+
+    // 팝업 갱신
+    this.scene.stop('PopupScene');
+    this.showBeakerPuzzlePopup();
   }
 
   // 하수구로 내용물 버리기
@@ -1015,7 +1087,7 @@ export default class KitchenScene extends BaseScene {
     }
   }
 
-  // 비커 간 물 옮기기
+  // 비커 간 물 옮기기 (비커끼리만)
   pourBeaker(from, to) {
     const capacities = { b5: 5, b7: 7, b12: 12 };
     const state = this.worktableState.beakerState;
@@ -1033,23 +1105,34 @@ export default class KitchenScene extends BaseScene {
       state[to] += pourAmount;
       this.saveWorktableState();
 
-      // 3ml 완성 체크 -> 자동 획득
-      if (this.checkBeakerPuzzleSolved()) {
-        this.worktableState.measuredCreamCollected = true;
-        this.saveWorktableState();
-
-        this.addItem({
-          id: 'measured_cream',
-          name: '계량된 우유',
-          image: 'assets/images/items/measured_cream.png'
-        });
-
-        this.showHintDialog('3ml 계량 성공!');
-      }
-
       // 팝업 갱신
       this.scene.stop('PopupScene');
       this.showBeakerPuzzlePopup();
+    } else {
+      this.showHintDialog('옮길 수 없어...');
+    }
+  }
+
+  // 측정 완료 버튼 클릭
+  tryCompleteMeasurement() {
+    const { b5, b7, b12 } = this.worktableState.beakerState;
+
+    // 어느 비커든 3ml면 성공
+    if (b5 === 3 || b7 === 3 || b12 === 3) {
+      this.worktableState.measuredCreamCollected = true;
+      this.saveWorktableState();
+
+      this.addItem({
+        id: 'measured_cream',
+        name: '계량된 생크림',
+        image: 'assets/images/items/measured_cream.png'
+      });
+
+      this.showHintDialog('3ml 계량 성공!');
+      this.scene.stop('PopupScene');
+      this.showBeakerPuzzlePopup();
+    } else {
+      this.showHintDialog('3ml가 아니야...');
     }
   }
 

@@ -156,7 +156,7 @@ export default class CaveScene extends BaseScene {
 
     // 냄비 클릭 영역 (재료 추가 또는 pave_chocolate 획득)
     clickAreas.push({
-      x: width / 1.5,
+      x: width / 2,
       y: height / 2,
       width: 150,
       height: 150,
@@ -246,13 +246,7 @@ export default class CaveScene extends BaseScene {
     }
 
     // 힌트 표시
-    if (!this.sceneState.chocolateAdded && !this.sceneState.creamAdded) {
-      this.showHintDialog('초콜릿과 생크림이 필요해...');
-    } else if (!this.sceneState.chocolateAdded) {
-      this.showHintDialog('초콜릿이 필요해...');
-    } else {
-      this.showHintDialog('생크림이 필요해...');
-    }
+    this.showHintDialog('레시피가 필요해...');
   }
 
   // pave_chocolate 획득

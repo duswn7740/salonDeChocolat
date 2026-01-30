@@ -231,7 +231,7 @@ export default class BootScene extends Phaser.Scene {
     this.time.delayedCall(500, () => {
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start('KitchenScene');  // 테스트용 (원래: 'TitleScene')
+        this.scene.start('TitleScene');  // 테스트용 (원래: 'TitleScene')
       });
     });
   }

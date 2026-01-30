@@ -402,7 +402,7 @@ export default class PathScene extends BaseScene {
   // 되돌아가기
   goBack() {
     // 완성된 파베 초콜릿 아이템 체크
-    const hasCompletedChocolate = this.checkHasItem('completed_pave_chocolate');
+    const hasCompletedChocolate = this.checkHasItem('pave_chocolate');
 
     if (hasCompletedChocolate) {
       // 아이템이 있으면 이전 씬으로 페이드 전환
