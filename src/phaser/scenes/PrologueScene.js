@@ -24,6 +24,7 @@ export default class PrologueScene extends BaseScene {
     this.hasCherryBonbon = false;
     this.cherryBonbonActivated = false;
     this.doorArea = null;
+    this.gameCompleted = window.gameCompleted || false;  // 게임 완료 여부
   }
 
   // preload는 BootScene에서 처리하므로 제거
@@ -38,6 +39,12 @@ export default class PrologueScene extends BaseScene {
     this.background = this.add.image(width / 2, height / 2, 'salon')
       .setOrigin(0.5)
       .setDisplaySize(width, height);
+
+    // pave_chocolate을 가지고 돌아왔는지 확인
+    if (this.checkHasItem('pave_chocolate') && !this.gameCompleted) {
+      this.showEndingSequence();
+      return;
+    }
 
     // 캐릭터 영역 (클릭 가능한 영역)
     const ownerArea = this.add.rectangle(
@@ -241,6 +248,93 @@ export default class PrologueScene extends BaseScene {
       // 팝업 유지하면서 힌트 dialog 표시 (2초 후 자동 닫힘)
       this.showHintDialog('문이 너무 작아...');
     }
+  }
+
+  // ========== 엔딩 시퀀스 ==========
+  showEndingSequence() {
+    const { width, height } = this.cameras.main;
+
+    // pave_chocolate 제거
+    window.dispatchEvent(new CustomEvent('removeItem', {
+      detail: { id: 'pave_chocolate' }
+    }));
+
+    // 게임 완료 상태 저장
+    this.gameCompleted = true;
+    window.gameCompleted = true;
+
+    // 감사 메시지 표시
+    const thankYouText = this.add.text(
+      width / 2,
+      height / 3,
+      '감사합니다!',
+      {
+        fontSize: '48px',
+        color: '#ffffff',
+        fontFamily: 'Arial',
+        stroke: '#8B4513',
+        strokeThickness: 6
+      }
+    ).setOrigin(0.5);
+
+    const subText = this.add.text(
+      width / 2,
+      height / 2.3,
+      '파베 초콜릿을 찾아주셔서 고마워요!\n덕분에 살롱을 열 수 있게 되었어요.',
+      {
+        fontSize: '24px',
+        color: '#ffffff',
+        fontFamily: 'Arial',
+        align: 'center',
+        stroke: '#8B4513',
+        strokeThickness: 3
+      }
+    ).setOrigin(0.5);
+
+    // 재시작 버튼
+    const restartButton = this.add.text(
+      width / 2,
+      height / 1.5,
+      '다시 시작하기',
+      {
+        fontSize: '28px',
+        color: '#ffffff',
+        backgroundColor: '#8B4513',
+        padding: { x: 20, y: 10 }
+      }
+    ).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+    restartButton.on('pointerdown', () => {
+      this.restartGame();
+    });
+  }
+
+  // 게임 재시작
+  restartGame() {
+    // 모든 상태 초기화
+    window.gameCompleted = false;
+    window.pathSceneCollectedItems = null;
+    window.caveSceneState = null;
+    window.cavePictureOrder = null;
+    window.kitchenSceneCollectedItems = null;
+    window.kitchenWorktableState = null;
+    window.kitchenOxPuzzle = null;
+    window.cabinInsideSceneState = null;
+    window.cabinInsideBookOrder = null;
+    window.cabinOutsideSceneState = null;
+    window.riversideSceneState = null;
+    window.barnSceneState = null;
+    window.forestSceneState = null;
+    window.gameInventory = [];
+    window.gameSelectedItem = null;
+
+    // TitleScene으로 이동
+    this.scene.start('TitleScene');
+  }
+
+  // 아이템 보유 여부 확인
+  checkHasItem(itemId) {
+    return window.gameInventory?.some(item => item.id === itemId) || false;
   }
 
   shutdown() {

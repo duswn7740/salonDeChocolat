@@ -53,7 +53,16 @@ export default class CabinOutsideScene extends BaseScene {
       0  // 디버그용
     );
 
-    // 2. 되돌아가기 영역 (숲으로)
+    // 2. 강가로 이동 영역
+    this.riversideArea = createClickArea(this,
+      width * 0.46,    // TODO: 위치 조정
+      height * 0.6,
+      300, 50,
+      () => this.goToRiverside(),
+      0 // 디버그용
+    );
+
+    // 3. 되돌아가기 영역 (숲으로)
     this.backArea = createClickArea(this,
       width * 0.5,
       height * 1,
@@ -95,6 +104,11 @@ export default class CabinOutsideScene extends BaseScene {
     this.background.setDisplaySize(width, height);
   }
 
+  // 강가로 이동
+  goToRiverside() {
+    this.fadeToScene('RiversideScene');
+  }
+
   // 숲으로 돌아가기
   goBack() {
     this.fadeToScene('ForestScene');
@@ -130,14 +144,14 @@ export default class CabinOutsideScene extends BaseScene {
   }
 
   disableAllAreas() {
-    const areas = [this.doorArea, this.backArea];
+    const areas = [this.doorArea, this.riversideArea, this.backArea];
     areas.forEach(area => {
       if (area) area.disableInteractive();
     });
   }
 
   enableAllAreas() {
-    const areas = [this.doorArea, this.backArea];
+    const areas = [this.doorArea, this.riversideArea, this.backArea];
     areas.forEach(area => {
       if (area) area.setInteractive({ useHandCursor: true });
     });

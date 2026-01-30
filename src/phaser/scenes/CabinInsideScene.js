@@ -221,6 +221,7 @@ export default class CabinInsideScene extends BaseScene {
           width: 150,
           height: 150,
           debugAlpha: 0,
+          scale: 0.5,
           callback: (popupScene) => this.collectDrawerItem(popupScene, 'weight')
         });
       }
@@ -380,11 +381,11 @@ export default class CabinInsideScene extends BaseScene {
         popupImage: 'bookshelf_after',
         popupSize: { width: 500, height: 500 },
         clickAreas: [{
-          x: width / 2,       // TODO: paper2 위치 조정
-          y: height / 1.7,
+          x: width / 2.1,       // TODO: paper2 위치 조정
+          y: height / 1.5,
           width: 100,
           height: 100,
-          debugAlpha: 0,
+          debugAlpha: 0.3,
           callback: () => this.collectPaper2()
         }],
         overlayItems: this.getBookshelfOverlayItems(true),  // 정렬된 책 표시

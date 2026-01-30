@@ -87,25 +87,28 @@ export default class PopupScene extends Phaser.Scene {
     });
 
     // X 버튼 (닫기) - depth 10 (항상 최상위)
-    this.closeButton = this.add.circle(
-      width / 2 + (popupSize.width / 2) - 20,
-      height / 2 - (popupSize.height / 2) + 20,
-      20,
-      0xd2691e
-    );
-    this.closeButton.setDepth(10);
-    this.closeButton.setInteractive({ useHandCursor: true });
-    this.closeButton.on('pointerdown', () => {
-      if (onClose) onClose();
-      this.scene.stop('PopupScene');
-    });
+    // onClose가 null이면 닫기 버튼 표시하지 않음 (클릭 영역으로만 닫기 가능)
+    if (onClose !== null) {
+      this.closeButton = this.add.circle(
+        width / 2 + (popupSize.width / 2) - 20,
+        height / 2 - (popupSize.height / 2) + 20,
+        20,
+        0xd2691e
+      );
+      this.closeButton.setDepth(10);
+      this.closeButton.setInteractive({ useHandCursor: true });
+      this.closeButton.on('pointerdown', () => {
+        this.scene.stop('PopupScene');
+        if (onClose) onClose();
+      });
 
-    this.closeButtonText = this.add.text(
-      width / 2 + (popupSize.width / 2) - 20,
-      height / 2 - (popupSize.height / 2) + 20,
-      '✕',
-      { fontSize: '24px', color: '#ffffff' }
-    ).setOrigin(0.5).setDepth(10);
+      this.closeButtonText = this.add.text(
+        width / 2 + (popupSize.width / 2) - 20,
+        height / 2 - (popupSize.height / 2) + 20,
+        '✕',
+        { fontSize: '24px', color: '#ffffff' }
+      ).setOrigin(0.5).setDepth(10);
+    }
   }
 
   // before 이미지 및 클릭 영역 제거 (아이템 획득 시 호출)

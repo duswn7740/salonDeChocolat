@@ -10,6 +10,8 @@ import ForestScene from './scenes/ForestScene';
 import CabinOutsideScene from './scenes/CabinOutsideScene';
 import CabinInsideScene from './scenes/CabinInsideScene';
 import KitchenScene from './scenes/KitchenScene';
+import RiversideScene from './scenes/RiversideScene';
+import CaveScene from './scenes/CaveScene';
 
 const config = {
   type: Phaser.AUTO,  // WebGL 또는 Canvas 자동 선택
@@ -38,6 +40,8 @@ const config = {
     CabinOutsideScene, // 오두막 외부
     CabinInsideScene,  // 오두막 내부
     KitchenScene,      // 부엌
+    RiversideScene,    // 강가
+    CaveScene,         // 동굴
     PopupScene,     // 팝업 (오버레이)
     // CabinInsideScene,
     // RiversideScene,

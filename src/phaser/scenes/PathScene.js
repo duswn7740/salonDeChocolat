@@ -186,8 +186,8 @@ export default class PathScene extends BaseScene {
           {
             x: width / 1.51,
             y: height / 1.32,
-            width: 25,
-            height: 25,
+            width: 50,
+            height: 50,
             debugColor: 0x00ff00,
             debugAlpha: 0,
             callback: (popupScene) => {
@@ -254,7 +254,7 @@ export default class PathScene extends BaseScene {
           width: 200,
           height: 100,
           debugColor: 0x00ff00,
-          debugAlpha: 0.3,
+          debugAlpha: 0,
           callback: () => this.tryPlaceWoodstick()
         }]
       };
@@ -358,9 +358,9 @@ export default class PathScene extends BaseScene {
         image: 'assets/images/items/paper1.png'
       },
       bush: {
-        id: 'coin',
-        name: '작은 동전',
-        image: 'assets/images/items/coin.png'
+        id: 'knight_piece',
+        name: '나이트 말',
+        image: 'assets/images/items/knight_piece.png'
       }
     };
 
@@ -373,11 +373,16 @@ export default class PathScene extends BaseScene {
       }));
     }
 
-    // 나뭇가지 획득 시 배경 즉시 변경
+    // 나뭇가지 획득 시 배경 즉시 변경 + 팝업 재실행 (1단계 clickArea 활성화)
     if (type === 'stump') {
       const { width, height } = this.cameras.main;
       this.background.setTexture('path_get_woodstick');
       this.background.setDisplaySize(width, height);
+
+      // 팝업 재실행하여 1단계 clickArea 활성화
+      this.scene.stop('PopupScene');
+      this.showPopup('stump');
+      return;
     }
 
     // before 이미지만 제거 (깜빡임 없이 자연스럽게 after 노출)

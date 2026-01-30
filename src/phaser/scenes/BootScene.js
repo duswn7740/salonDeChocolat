@@ -62,6 +62,10 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('forest_get_axe', 'assets/images/backgrounds/forest_get_axe.png');
     this.load.image('cabin_outside', 'assets/images/backgrounds/cabin_outside.png');
     this.load.image('cabin_outside_open_door', 'assets/images/backgrounds/cabin_outside_open_door.png');
+    this.load.image('riverside', 'assets/images/backgrounds/riverside.png');
+    this.load.image('riverside_open', 'assets/images/backgrounds/riverside_open.png');
+    this.load.image('cave', 'assets/images/backgrounds/cave.png');
+    this.load.image('cave_with_light', 'assets/images/backgrounds/cave_with_light.png');
 
     // 팝업 이미지
     this.load.image('signpost_before', 'assets/images/popup/signpost_before.png');
@@ -102,6 +106,42 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('table_before', 'assets/images/popup/table_before.png');
     this.load.image('table_after', 'assets/images/popup/table_after.png');
     this.load.image('worktable', 'assets/images/popup/worktable.png');
+    this.load.image('worktable_with_recipe', 'assets/images/popup/worktable_with_recipe.png');
+
+    // Kitchen 저울 퍼즐 이미지
+    this.load.image('scale_puzzle', 'assets/images/popup/scale_puzzle.png');
+    this.load.image('scale_puzzle_empty', 'assets/images/popup/scale_puzzle_empty.png');
+    this.load.image('scale_puzzle_solved', 'assets/images/popup/scale_puzzle_solved.png');
+    this.load.image('scale_balanced', 'assets/images/popup/scale_balanced.png');
+    this.load.image('scale_left', 'assets/images/popup/scale_left.png');
+    this.load.image('scale_right', 'assets/images/popup/scale_right.png');
+    this.load.image('weight_3g_overlay', 'assets/images/popup/weight_3g_overlay.png');
+    this.load.image('weight_5g_overlay', 'assets/images/popup/weight_5g_overlay.png');
+    this.load.image('weight_6g_overlay', 'assets/images/popup/weight_6g_overlay.png');
+    this.load.image('weight_8g_overlay', 'assets/images/popup/weight_8g_overlay.png');
+    this.load.image('chocolate_on_scale', 'assets/images/popup/chocolate_on_scale.png');
+    this.load.image('measured_chocolate_overlay', 'assets/images/popup/measured_chocolate_overlay.png');
+
+    // Kitchen 비커 퍼즐 이미지 (overlay 방식)
+    this.load.image('beaker_puzzle', 'assets/images/popup/beaker_puzzle.png');
+    this.load.image('beaker_puzzle_empty', 'assets/images/popup/beaker_puzzle_empty.png');
+    this.load.image('fresh_cream_overlay', 'assets/images/popup/fresh_cream_overlay.png');
+    // 5ml 비커 overlay (0, 3, 5)
+    this.load.image('beaker_5ml_0', 'assets/images/popup/beaker_5ml_0.png');
+    this.load.image('beaker_5ml_3', 'assets/images/popup/beaker_5ml_3.png');
+    this.load.image('beaker_5ml_5', 'assets/images/popup/beaker_5ml_5.png');
+    // 7ml 비커 overlay (0, 2, 3, 5, 7)
+    this.load.image('beaker_7ml_0', 'assets/images/popup/beaker_7ml_0.png');
+    this.load.image('beaker_7ml_2', 'assets/images/popup/beaker_7ml_2.png');
+    this.load.image('beaker_7ml_3', 'assets/images/popup/beaker_7ml_3.png');
+    this.load.image('beaker_7ml_5', 'assets/images/popup/beaker_7ml_5.png');
+    this.load.image('beaker_7ml_7', 'assets/images/popup/beaker_7ml_7.png');
+    // 12ml 비커 overlay (0, 3, 5, 10, 12)
+    this.load.image('beaker_12ml_0', 'assets/images/popup/beaker_12ml_0.png');
+    this.load.image('beaker_12ml_3', 'assets/images/popup/beaker_12ml_3.png');
+    this.load.image('beaker_12ml_5', 'assets/images/popup/beaker_12ml_5.png');
+    this.load.image('beaker_12ml_10', 'assets/images/popup/beaker_12ml_10.png');
+    this.load.image('beaker_12ml_12', 'assets/images/popup/beaker_12ml_12.png');
 
     // Kitchen 오버레이 이미지
     this.load.image('ox_o', 'assets/images/popup/ox_o.png');
@@ -120,6 +160,29 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('bookshelf_before', 'assets/images/popup/bookshelf_before.png');
     this.load.image('bookshelf_after', 'assets/images/popup/bookshelf_after.png');
 
+    // Riverside 팝업 이미지
+    this.load.image('sluice_closed', 'assets/images/popup/sluice_closed.png');
+    this.load.image('sluice_opened', 'assets/images/popup/sluice_opened.png');
+    this.load.image('box_locked', 'assets/images/popup/box_locked.png');
+    this.load.image('box_unlocked', 'assets/images/popup/box_unlocked.png');
+    this.load.image('box_opened', 'assets/images/popup/box_opened.png');
+    this.load.image('knight_visited', 'assets/images/popup/knight_visited.png');
+    this.load.image('knight_movable', 'assets/images/popup/knight_movable.png');
+    this.load.image('knight_piece', 'assets/images/popup/knight_piece.png');
+
+    // Cave 팝업 이미지
+    this.load.image('bonfire_before', 'assets/images/popup/bonfire_before.png');
+    this.load.image('bonfire_with_firewood', 'assets/images/popup/bonfire_with_firewood.png');
+    this.load.image('bonfire_after', 'assets/images/popup/bonfire_after.png');
+    this.load.image('cave_desk', 'assets/images/popup/cave_desk.png');
+
+    // 그림 퍼즐 오버레이 (paper1~4와 동일)
+    this.load.image('paper1_overlay', 'assets/images/popup/paper1_overlay.png');
+    this.load.image('paper2_overlay', 'assets/images/popup/paper2_overlay.png');
+    this.load.image('paper3_overlay', 'assets/images/popup/paper3_overlay.png');
+    this.load.image('paper4_overlay', 'assets/images/popup/paper4_overlay.png');
+    this.load.image('recipe_overlay', 'assets/images/popup/recipe_overlay.png');
+
     // 책 오버레이 이미지 (M-O-C-H-A)
     this.load.image('book1_overlay', 'assets/images/popup/book1_overlay.png');  // M
     this.load.image('book2_overlay', 'assets/images/popup/book2_overlay.png');  // O
@@ -134,7 +197,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('beaker_overlay', 'assets/images/popup/beaker_overlay.png');
 
     // 아이템 이미지
-    this.load.image('coin', 'assets/images/items/coin.png');
+    this.load.image('knight_piece', 'assets/images/items/knight_piece.png');
     this.load.image('paper1', 'assets/images/items/paper1.png');
     this.load.image('strong_woodstick', 'assets/images/items/strong_woodstick.png');
     this.load.image('yellow_key', 'assets/images/items/yellow_key.png');
@@ -154,7 +217,13 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('book', 'assets/images/items/book.png');
     this.load.image('paper2', 'assets/images/items/paper2.png');
     this.load.image('paper3', 'assets/images/items/paper3.png');
+    this.load.image('paper4', 'assets/images/items/paper4.png');
     this.load.image('fresh_cream', 'assets/images/items/fresh_cream.png');
+    this.load.image('recipe', 'assets/images/items/recipe.png');
+    this.load.image('measured_chocolate', 'assets/images/items/measured_chocolate.png');
+    this.load.image('measured_cream', 'assets/images/items/measured_cream.png');
+    this.load.image('pave_chocolate', 'assets/images/items/pave_chocolate.png');
+
   }
 
   create() {
