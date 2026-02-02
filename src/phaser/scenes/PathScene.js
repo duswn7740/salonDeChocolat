@@ -151,8 +151,10 @@ export default class PathScene extends BaseScene {
               if (hasTweezers) {
                 // tweezers 아이템 제거
                 this.removeItem('tweezers');
+                this.playRightSound();
                 this.onPopupItemClick(popupScene, 'signpost');
               } else {
+                this.playWrongSound();
                 this.showHintDialog('꽉 끼어 있어...');
               }
             }
@@ -285,11 +287,13 @@ export default class PathScene extends BaseScene {
       this.collectedItems.woodstickPlaced = true;
       window.pathSceneCollectedItems = this.collectedItems;
       this.removeItem('strong_woodstick');
+      this.playRightSound();
 
       // 팝업 재실행 (overlay 표시)
       this.scene.stop('PopupScene');
       this.showPopup('stump');
     } else {
+      this.playWrongSound();
       const hints = [
         '뭔가 올려놓을 수 있을 것 같아...',
         '튼튼한 나뭇가지가 있으면...'
@@ -304,6 +308,7 @@ export default class PathScene extends BaseScene {
       this.collectedItems.firewood = true;
       window.pathSceneCollectedItems = this.collectedItems;
       this.removeItem('axe');
+      this.playRightSound();
 
       // 장작 아이템 추가
       window.dispatchEvent(new CustomEvent('addItem', {
@@ -318,6 +323,7 @@ export default class PathScene extends BaseScene {
       this.scene.stop('PopupScene');
       this.showPopup('stump');
     } else {
+      this.playWrongSound();
       this.showHintDialog('이걸로는 자를 수 없어...');
     }
   }

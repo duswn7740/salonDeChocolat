@@ -299,6 +299,7 @@ export default class CabinInsideScene extends BaseScene {
     // drawer1Unlocked로 잠금 해제 상태 추적
     if (!this.sceneState.drawer1Unlocked) {
       if (!this.checkSelectedItem('blue_key')) {
+        this.playWrongSound();
         const hints = [
           '잠겨있어...',
           '열쇠가 필요해 보여...',
@@ -311,6 +312,7 @@ export default class CabinInsideScene extends BaseScene {
       // blue_key 사용하여 잠금 해제
       this.sceneState.drawer1Unlocked = true;
       this.removeItem('blue_key');
+      this.playRightSound();
     }
 
     // 서랍 열기
@@ -559,11 +561,13 @@ export default class CabinInsideScene extends BaseScene {
       this.saveState();
       this.saveBookOrder();
       this.removeItem('book');
+      this.playRightSound();
 
       // 팝업 재실행 (퍼즐 모드로)
       this.scene.stop('PopupScene');
       this.showBookshelfPopup();
     } else {
+      this.playWrongSound();
       this.showHintDialog('책 한 권이 모자라...');
     }
   }

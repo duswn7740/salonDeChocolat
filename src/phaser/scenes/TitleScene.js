@@ -39,12 +39,17 @@ export default class TitleScene extends BaseScene {
       BUTTON_STYLES.normalColor
     );
 
+    
     const startText = this.add.text(
       width / 2,
       height / 2 + 100,
       '게임 시작',
       TEXT_STYLES.button
     ).setOrigin(0.5);
+
+    // 오프닝 크래딧
+    this.add.text(width / 2, height / 4, '만든이: 윤연주 \n 멘탈케어: 이세현 \n 배경음: 이세현 \n 효과음: 이세현 \n 그림: xx', TEXT_STYLES.ending)
+      .setOrigin(0.5)
 
     // 버튼 인터랙티브
     startButton.setInteractive({ useHandCursor: true });

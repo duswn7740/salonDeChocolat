@@ -72,7 +72,6 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('signpost_after', 'assets/images/popup/signpost_after.png');
     this.load.image('stump_before', 'assets/images/popup/stump_before.png');
     this.load.image('stump_after', 'assets/images/popup/stump_after.png');
-    this.load.image('woodstick_on_stump', 'assets/images/popup/woodstick_on_stump.png');
     this.load.image('rock_before', 'assets/images/popup/rock_before.png');
     this.load.image('rock_after', 'assets/images/popup/rock_after.png');
     this.load.image('bush_before', 'assets/images/popup/bush_before.png');
@@ -109,9 +108,6 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('worktable_with_recipe', 'assets/images/popup/worktable_with_recipe.png');
 
     // Kitchen 저울 퍼즐 이미지
-    this.load.image('scale_puzzle', 'assets/images/popup/scale_puzzle.png');
-    this.load.image('scale_puzzle_empty', 'assets/images/popup/scale_puzzle_empty.png');
-    this.load.image('scale_puzzle_solved', 'assets/images/popup/scale_puzzle_solved.png');
     this.load.image('scale_balanced', 'assets/images/popup/scale_balanced.png');
     this.load.image('scale_left', 'assets/images/popup/scale_left.png');
     this.load.image('scale_right', 'assets/images/popup/scale_right.png');
@@ -120,11 +116,9 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('weight_6g_overlay', 'assets/images/popup/weight_6g_overlay.png');
     this.load.image('weight_8g_overlay', 'assets/images/popup/weight_8g_overlay.png');
     this.load.image('chocolate_on_scale', 'assets/images/popup/chocolate_on_scale.png');
-    this.load.image('measured_chocolate_overlay', 'assets/images/popup/measured_chocolate_overlay.png');
 
     // Kitchen 비커 퍼즐 이미지 (overlay 방식)
     this.load.image('beaker_puzzle', 'assets/images/popup/beaker_puzzle.png');
-    this.load.image('beaker_puzzle_empty', 'assets/images/popup/beaker_puzzle_empty.png');
     this.load.image('fresh_cream_overlay', 'assets/images/popup/fresh_cream_overlay.png');
     // 5ml 비커 overlay (0, 3, 5)
     this.load.image('beaker_5ml_0', 'assets/images/popup/beaker_5ml_0.png');
@@ -224,6 +218,10 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('measured_cream', 'assets/images/items/measured_cream.png');
     this.load.image('pave_chocolate', 'assets/images/items/pave_chocolate.png');
 
+    // ========== 사운드 프리로드 ==========
+    this.load.audio('bgm', 'assets/sounds/qoo.mp3');
+    this.load.audio('right', 'assets/sounds/right.mp3');
+    this.load.audio('wrong', 'assets/sounds/wrong.mp3');
   }
 
   create() {

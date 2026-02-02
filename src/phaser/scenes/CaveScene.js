@@ -174,10 +174,12 @@ export default class CaveScene extends BaseScene {
       this.saveState();
       this.removeItem('firewood');
 
+      this.playRightSound();
       // 팝업 재실행
       this.scene.stop('PopupScene');
       this.showBonfirePopup();
     } else {
+      this.playWrongSound();
       const hints = [
         '불을 피울 수 없어...',
         '장작이 필요해...'
@@ -192,6 +194,7 @@ export default class CaveScene extends BaseScene {
       this.sceneState.bonfireLit = true;
       this.saveState();
       this.removeItem('match');
+      this.playRightSound();
 
       // 배경 변경
       const { width, height } = this.cameras.main;
@@ -205,6 +208,7 @@ export default class CaveScene extends BaseScene {
       this.scene.stop('PopupScene');
       this.showBonfirePopup();
     } else {
+      this.playWrongSound();
       this.showHintDialog('불을 붙일 수 없어...');
     }
   }
@@ -216,6 +220,7 @@ export default class CaveScene extends BaseScene {
       this.sceneState.chocolateAdded = true;
       this.saveState();
       this.removeItem('measured_chocolate');
+      this.playRightSound();
 
       // 둘 다 넣었으면 pave_chocolate 획득
       if (this.sceneState.creamAdded) {
@@ -233,6 +238,7 @@ export default class CaveScene extends BaseScene {
       this.sceneState.creamAdded = true;
       this.saveState();
       this.removeItem('measured_cream');
+      this.playRightSound();
 
       // 둘 다 넣었으면 pave_chocolate 획득
       if (this.sceneState.chocolateAdded) {
@@ -246,6 +252,7 @@ export default class CaveScene extends BaseScene {
     }
 
     // 힌트 표시
+    this.playWrongSound();
     this.showHintDialog('레시피가 필요해...');
   }
 
@@ -260,6 +267,7 @@ export default class CaveScene extends BaseScene {
       image: 'assets/images/items/pave_chocolate.png'
     });
 
+    this.playRightSound();
     this.showHintDialog('파베 초콜릿을 획득했다!');
 
     // 팝업 재실행

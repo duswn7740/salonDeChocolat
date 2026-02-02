@@ -140,6 +140,7 @@ export default class BarnScene extends BaseScene {
   feedCow() {
     // straw 아이템 사용 체크
     if (!this.checkSelectedItem('straw')) {
+      this.playWrongSound();
       const hints = [
         '가까이 갈 수 없어...',
         '소가 배고파 보여...',
@@ -155,6 +156,7 @@ export default class BarnScene extends BaseScene {
 
     // straw 아이템 제거
     this.removeItem('straw');
+    this.playRightSound();
 
     // 배경 즉시 변경
     const { width, height } = this.cameras.main;
@@ -267,6 +269,7 @@ export default class BarnScene extends BaseScene {
 
   useMealRake() {
     if (!this.checkSelectedItem('rake')) {
+      this.playWrongSound();
       this.showHintDialog('이 아래에 뭔가 있는 거 같아...');
       return;
     }
@@ -276,6 +279,7 @@ export default class BarnScene extends BaseScene {
 
     // rake 아이템 제거
     this.removeItem('rake');
+    this.playRightSound();
 
     // 팝업 닫고 다시 열기 (meal_with_rake로)
     this.scene.stop('PopupScene');

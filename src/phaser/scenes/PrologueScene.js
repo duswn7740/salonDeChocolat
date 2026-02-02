@@ -307,6 +307,19 @@ export default class PrologueScene extends BaseScene {
     restartButton.on('pointerdown', () => {
       this.restartGame();
     });
+
+    // 엔딩 크레딧
+    const ending = this.add.text(
+      width / 2,
+      height / 1,
+      '만든이: 윤연주 \n 멘탈케어: 이세현 \n 배경음: 이세현 \n 효과음: 이세현 \n 그림: xx',
+      {
+        fontSize: '14px',
+        color: '#000000',
+        fontFamily: 'Arial',
+        alignL: 'center'
+      }
+    ).setOrigin(0.5);
   }
 
   // 게임 재시작

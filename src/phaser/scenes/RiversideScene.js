@@ -135,6 +135,7 @@ export default class RiversideScene extends BaseScene {
       this.collectedItems.sluiceOpened = true;
       this.saveState();
       this.removeItem('gear');
+      this.playRightSound();
 
       // 배경 변경
       const { width, height } = this.cameras.main;
@@ -149,6 +150,7 @@ export default class RiversideScene extends BaseScene {
       this.enableAllAreas();
       this.activeArea = null;
     } else {
+      this.playWrongSound();
       const hints = [
         '수문이 닫혀있어...',
         '톱니바퀴 모양의 뭔가가 필요해...'
@@ -235,6 +237,7 @@ export default class RiversideScene extends BaseScene {
       this.collectedItems.boxUnlocked = true;
       this.saveState();
       this.removeItem('knight_piece');
+      this.playRightSound();
 
       // 시작점 설정 (우측 하단: row=4, col=4)
       this.knightPosition = { row: 4, col: 4 };
@@ -246,6 +249,7 @@ export default class RiversideScene extends BaseScene {
       this.scene.stop('PopupScene');
       this.showBoxPopup();
     } else {
+      this.playWrongSound();
       const hints = [
         '잠겨있어...',
         '체스말이 필요해...'

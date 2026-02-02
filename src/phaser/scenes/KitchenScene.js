@@ -231,11 +231,13 @@ export default class KitchenScene extends BaseScene {
       this.collectedItems.fridgeUnlocked = true;
       this.saveState();
       this.removeItem('pendant');
+      this.playRightSound();
 
       // 팝업 재실행 (fridge_fresh_cream로)
       this.scene.stop('PopupScene');
       this.showFridgePopup();
     } else {
+      this.playWrongSound();
       const hints = [
         '잠겨있어...',
         '맞는 팬던트가 있을거야...'
@@ -419,11 +421,13 @@ export default class KitchenScene extends BaseScene {
     if (correct) {
       this.collectedItems.tablePuzzleSolved = true;
       this.saveState();
+      this.playRightSound();
 
       // 팝업 갱신 (table_after + book)
       this.scene.stop('PopupScene');
       this.showTablePopup();
     } else {
+      this.playWrongSound();
       this.showHintDialog('틀렸어...');
     }
   }
@@ -526,11 +530,13 @@ export default class KitchenScene extends BaseScene {
       this.worktableState.recipeUsed = true;
       this.saveWorktableState();
       this.removeItem('recipe');
+      this.playRightSound();
 
       // 팝업 재실행 (좌/중/우 선택 화면)
       this.scene.stop('PopupScene');
       this.showWorktablePopup();
     } else {
+      this.playWrongSound();
       this.showHintDialog('레시피가 필요해...');
     }
   }
@@ -599,24 +605,24 @@ export default class KitchenScene extends BaseScene {
     const { width, height } = this.cameras.main;
     const items = [];
 
-    // 초콜릿과 무게추 아이템 둘 다 사용한 경우에만 무게추 표시
-    if (this.worktableState.chocolateOnScale && this.worktableState.weightAdded) {
-      // 저울 위 무게추 위치 (화면 위쪽)
-      const scaleWeightPositions = {
-        3: { x: width / 4, y: height / 2.5 },
-        5: { x: width / 3, y: height / 2.5 },
-        6: { x: width / 2.5, y: height / 2.5 },
-        8: { x: width / 2, y: height / 2.5 }
-      };
+    // 저울 위 무게추 위치 (화면 위쪽)
+    const scaleWeightPositions = {
+      3: { x: width / 4, y: height / 2.5 },
+      5: { x: width / 3, y: height / 2.5 },
+      6: { x: width / 2.5, y: height / 2.5 },
+      8: { x: width / 2, y: height / 2.5 }
+    };
 
-      // 책상 위 무게추 위치 (화면 아래쪽)
-      const tableWeightPositions = {
-        3: { x: width / 4, y: height / 1.5 },
-        5: { x: width / 3, y: height / 1.5 },
-        6: { x: width / 2.5, y: height / 1.5 },
-        8: { x: width / 2, y: height / 1.5 }
-      };
+    // 책상 위 무게추 위치 (화면 아래쪽)
+    const tableWeightPositions = {
+      3: { x: width / 4, y: height / 1.5 },
+      5: { x: width / 3, y: height / 1.5 },
+      6: { x: width / 2.5, y: height / 1.5 },
+      8: { x: width / 2, y: height / 1.5 }
+    };
 
+    // 무게추 아이템 사용한 경우 무게추 표시
+    if (this.worktableState.weightAdded) {
       // 저울 위 무게추 표시
       this.worktableState.weightsOnScale.forEach((w, idx) => {
         items.push({
@@ -636,8 +642,10 @@ export default class KitchenScene extends BaseScene {
           scale: 0.2
         });
       });
+    }
 
-      // 초콜릿 표시
+    // 초콜릿 표시
+    if (this.worktableState.chocolateOnScale) {
       items.push({
         key: 'chocolate_on_scale',
         x: width / 1.5,
@@ -653,8 +661,8 @@ export default class KitchenScene extends BaseScene {
     const { width, height } = this.cameras.main;
     const clickAreas = [];
 
-    // 초콜릿과 무게추 아이템 둘 다 사용한 경우에만 무게추 이동 가능
-    if (this.worktableState.chocolateOnScale && this.worktableState.weightAdded) {
+    // 무게추 아이템 사용한 경우 무게추 이동 가능
+    if (this.worktableState.weightAdded) {
       // 저울 위 무게추 위치 (클릭하면 책상으로 이동) - 화면 위쪽
       const scaleWeightPositions = {
         3: { x: width / 4, y: height / 2.5 },
@@ -764,6 +772,7 @@ export default class KitchenScene extends BaseScene {
       this.worktableState.weightsOnTable.push(6);  // 6g 무게추 추가
       this.saveWorktableState();
       this.removeItem('weight');
+      this.playRightSound();
 
       this.scene.stop('PopupScene');
       this.showScalePuzzlePopup();
@@ -775,6 +784,7 @@ export default class KitchenScene extends BaseScene {
       this.worktableState.chocolateOnScale = true;
       this.saveWorktableState();
       this.removeItem('chocolate');
+      this.playRightSound();
 
       this.scene.stop('PopupScene');
       this.showScalePuzzlePopup();
@@ -782,6 +792,7 @@ export default class KitchenScene extends BaseScene {
     }
 
     // 힌트 표시
+    this.playWrongSound();
     if (!this.worktableState.chocolateOnScale && !this.worktableState.weightAdded) {
       this.showHintDialog('초콜릿과 무게추가 필요해...');
     } else if (!this.worktableState.chocolateOnScale) {
@@ -808,10 +819,12 @@ export default class KitchenScene extends BaseScene {
         image: 'assets/images/items/measured_chocolate.png'
       });
 
+      this.playRightSound();
       this.showHintDialog('17g 계량 성공!');
       this.scene.stop('PopupScene');
       this.showScalePuzzlePopup();
     } else {
+      this.playWrongSound();
       this.showHintDialog(`${totalWeight}g... 안 맞아...`);
     }
   }
@@ -902,6 +915,7 @@ export default class KitchenScene extends BaseScene {
       this.worktableState.beakerAdded = true;
       this.saveWorktableState();
       this.removeItem('beaker');
+      this.playRightSound();
 
       this.scene.stop('PopupScene');
       this.showBeakerPuzzlePopup();
@@ -913,6 +927,7 @@ export default class KitchenScene extends BaseScene {
       this.worktableState.creamUsed = true;
       this.saveWorktableState();
       this.removeItem('fresh_cream');
+      this.playRightSound();
 
       this.scene.stop('PopupScene');
       this.showBeakerPuzzlePopup();
@@ -920,6 +935,7 @@ export default class KitchenScene extends BaseScene {
     }
 
     // 힌트 표시
+    this.playWrongSound();
     if (!this.worktableState.beakerAdded && !this.worktableState.creamUsed) {
       this.showHintDialog('비커와 생크림이 필요해...');
     } else if (!this.worktableState.beakerAdded) {
@@ -1128,10 +1144,12 @@ export default class KitchenScene extends BaseScene {
         image: 'assets/images/items/measured_cream.png'
       });
 
+      this.playRightSound();
       this.showHintDialog('3ml 계량 성공!');
       this.scene.stop('PopupScene');
       this.showBeakerPuzzlePopup();
     } else {
+      this.playWrongSound();
       this.showHintDialog('3ml가 아니야...');
     }
   }

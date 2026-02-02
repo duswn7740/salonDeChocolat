@@ -32,6 +32,10 @@ export const TEXT_STYLES = {
   hint: {
     fontSize: '16px',
     color: '#ffffff'
+  },
+  ending: {
+    fontSize: '14px',
+    color: '#000000'
   }
 };
 

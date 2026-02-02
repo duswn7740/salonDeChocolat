@@ -82,6 +82,7 @@ export default class CabinOutsideScene extends BaseScene {
 
     // yellow_key 아이템 사용 체크
     if (!this.checkSelectedItem('yellow_key')) {
+      this.playWrongSound();
       const hints = [
         '잠겨있어...',
         '들어갈 수 없어...',
@@ -97,6 +98,7 @@ export default class CabinOutsideScene extends BaseScene {
 
     // yellow_key 아이템 제거
     this.removeItem('yellow_key');
+    this.playRightSound();
 
     // 배경 즉시 변경
     const { width, height } = this.cameras.main;
