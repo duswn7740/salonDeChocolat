@@ -16,6 +16,18 @@ export default class ForestScene extends BaseScene {
       birdhouse: false,  // 새집
       axe: false         // 도끼
     };
+
+    // 쿠 대화 상태 (첫 방문 시에만 등장)
+    this.qooDialogShown = window.forestQooDialogShown || false;
+    this.qooDialogIndex = 0;
+    this.qooDialogs = [
+      '사실 말이야...',
+      '사장님이 자꾸 날 빼고 재밌는걸 하길래',
+      '초콜릿은 내가 먹어버렸어!',
+      '사장님을 돕고싶다면',
+      '레시피와 재료를 찾아서 만들어야 할거야!',
+      '그럼 난 이만~!'
+    ];
   }
 
   // preload는 BootScene에서 처리
@@ -32,14 +44,97 @@ export default class ForestScene extends BaseScene {
       .setOrigin(0.5)
       .setDisplaySize(width, height);
 
-    // 터치 가능한 영역들 생성
-    this.createInteractiveAreas();
-
-    // DialogBox 이벤트 리스닝 (힌트용)
-    this.handleDialogClick = () => {
-      // 힌트 다이얼로그는 자동으로 닫히므로 별도 처리 불필요
-    };
+    // DialogBox 이벤트 리스닝
+    this.handleDialogClick = () => this.onDialogClick();
     window.addEventListener('dialogClick', this.handleDialogClick);
+
+    // 첫 방문 시 쿠 등장
+    if (!this.qooDialogShown) {
+      this.showQooOverlay();
+    } else {
+      // 터치 가능한 영역들 생성
+      this.createInteractiveAreas();
+    }
+  }
+
+  // 쿠 오버레이 표시
+  showQooOverlay() {
+    const { width, height } = this.cameras.main;
+
+    // 쿠 오버레이 이미지
+    this.qooOverlay = this.add.image(width / 1.8, height / 1.5, 'qoo_overlay')
+      .setOrigin(0.5)
+      .setScale(0.5)
+      .setDepth(100);
+
+    // 쿠 클릭 영역
+    this.qooClickArea = this.add.rectangle(
+      width / 1.8,
+      height / 1.5,
+      250,
+      400,
+      0xff0000,
+      0
+    ).setDepth(101);
+    this.qooClickArea.setInteractive({ useHandCursor: true });
+
+    this.qooClickArea.on('pointerdown', () => {
+      this.startQooDialog();
+    });
+  }
+
+  // 쿠 대화 시작
+  startQooDialog() {
+    // 클릭 영역 제거 (대화 시작 후에는 dialogClick으로 진행)
+    if (this.qooClickArea) {
+      this.qooClickArea.destroy();
+      this.qooClickArea = null;
+    }
+
+    this.qooDialogIndex = 0;
+    this.showDialog(this.qooDialogs[0]);
+  }
+
+  // 대화 표시
+  showDialog(message) {
+    window.dispatchEvent(new CustomEvent('showDialog', {
+      detail: { message }
+    }));
+  }
+
+  // 대화 클릭 시 처리
+  onDialogClick() {
+    // 쿠 대화 진행 중일 때
+    if (!this.qooDialogShown && this.qooDialogIndex >= 0) {
+      this.qooDialogIndex++;
+
+      if (this.qooDialogIndex < this.qooDialogs.length) {
+        // 다음 대화
+        this.showDialog(this.qooDialogs[this.qooDialogIndex]);
+      } else {
+        // 대화 완료
+        this.finishQooDialog();
+      }
+    }
+  }
+
+  // 쿠 대화 완료
+  finishQooDialog() {
+    // 대화창 닫기
+    window.dispatchEvent(new CustomEvent('hideDialog'));
+
+    // 쿠 오버레이 제거
+    if (this.qooOverlay) {
+      this.qooOverlay.destroy();
+      this.qooOverlay = null;
+    }
+
+    // 상태 저장
+    this.qooDialogShown = true;
+    window.forestQooDialogShown = true;
+
+    // 게임 영역 활성화
+    this.createInteractiveAreas();
   }
 
   createInteractiveAreas() {

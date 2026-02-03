@@ -66,8 +66,9 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('riverside_open', 'assets/images/backgrounds/riverside_open.png');
     this.load.image('cave', 'assets/images/backgrounds/cave.png');
     this.load.image('cave_with_light', 'assets/images/backgrounds/cave_with_light.png');
-
+    
     // 팝업 이미지
+    this.load.image('qoo_overlay', 'assets/images/popup/qoo_overlay.png');
     this.load.image('signpost_before', 'assets/images/popup/signpost_before.png');
     this.load.image('signpost_after', 'assets/images/popup/signpost_after.png');
     this.load.image('stump_before', 'assets/images/popup/stump_before.png');
