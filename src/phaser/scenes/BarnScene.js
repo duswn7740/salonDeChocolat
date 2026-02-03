@@ -406,6 +406,7 @@ export default class BarnScene extends BaseScene {
   }
 
   addItem(item) {
+    this.playRightSound();
     window.dispatchEvent(new CustomEvent('addItem', { detail: item }));
   }
 

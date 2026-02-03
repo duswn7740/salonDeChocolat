@@ -146,6 +146,7 @@ export default class ForestScene extends BaseScene {
     const item = itemInfo[type];
 
     if (item?.id) {
+      this.playRightSound();
       window.dispatchEvent(new CustomEvent('addItem', {
         detail: item
       }));
@@ -164,6 +165,7 @@ export default class ForestScene extends BaseScene {
     window.forestSceneCollectedItems = this.collectedItems;
 
     // 아이템 인벤토리에 추가
+    this.playRightSound();
     window.dispatchEvent(new CustomEvent('addItem', {
       detail: {
         id: 'axe',

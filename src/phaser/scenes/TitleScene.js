@@ -1,6 +1,6 @@
 // src/phaser/scenes/TitleScene.js
 import BaseScene from './BaseScene';
-import { COLORS, TEXT_STYLES, BUTTON_STYLES } from '../styles/gameStyles';
+import { COLORS, TEXT_STYLES, BUTTON_STYLES, CREDITS_SHORT } from '../styles/gameStyles';
 
 export default class TitleScene extends BaseScene {
   constructor() {
@@ -48,8 +48,8 @@ export default class TitleScene extends BaseScene {
     ).setOrigin(0.5);
 
     // 오프닝 크래딧
-    this.add.text(width / 2, height / 4, '만든이: 윤연주 \n 멘탈케어: 이세현 \n 배경음: 이세현 \n 효과음: 이세현 \n 그림: xx', TEXT_STYLES.ending)
-      .setOrigin(0.5)
+    this.add.text(width / 2, height / 1.2, CREDITS_SHORT, TEXT_STYLES.ending)
+      .setOrigin(0.5);
 
     // 버튼 인터랙티브
     startButton.setInteractive({ useHandCursor: true });

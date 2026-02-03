@@ -253,7 +253,7 @@ export default class CaveScene extends BaseScene {
 
     // 힌트 표시
     this.playWrongSound();
-    this.showHintDialog('레시피가 필요해...');
+    this.showHintDialog('정확한 재료가 필요해...');
   }
 
   // pave_chocolate 획득
@@ -579,6 +579,7 @@ export default class CaveScene extends BaseScene {
   }
 
   addItem(item) {
+    this.playRightSound();
     window.dispatchEvent(new CustomEvent('addItem', { detail: item }));
   }
 

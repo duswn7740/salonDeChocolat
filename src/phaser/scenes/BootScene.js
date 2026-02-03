@@ -120,21 +120,35 @@ export default class BootScene extends Phaser.Scene {
     // Kitchen 비커 퍼즐 이미지 (overlay 방식)
     this.load.image('beaker_puzzle', 'assets/images/popup/beaker_puzzle.png');
     this.load.image('fresh_cream_overlay', 'assets/images/popup/fresh_cream_overlay.png');
-    // 5ml 비커 overlay (0, 3, 5)
+    // 5ml 비커 overlay (0~5)
     this.load.image('beaker_5ml_0', 'assets/images/popup/beaker_5ml_0.png');
+    this.load.image('beaker_5ml_1', 'assets/images/popup/beaker_5ml_1.png');
+    this.load.image('beaker_5ml_2', 'assets/images/popup/beaker_5ml_2.png');
     this.load.image('beaker_5ml_3', 'assets/images/popup/beaker_5ml_3.png');
+    this.load.image('beaker_5ml_4', 'assets/images/popup/beaker_5ml_4.png');
     this.load.image('beaker_5ml_5', 'assets/images/popup/beaker_5ml_5.png');
-    // 7ml 비커 overlay (0, 2, 3, 5, 7)
+    // 7ml 비커 overlay (0~7)
     this.load.image('beaker_7ml_0', 'assets/images/popup/beaker_7ml_0.png');
+    this.load.image('beaker_7ml_1', 'assets/images/popup/beaker_7ml_1.png');
     this.load.image('beaker_7ml_2', 'assets/images/popup/beaker_7ml_2.png');
     this.load.image('beaker_7ml_3', 'assets/images/popup/beaker_7ml_3.png');
+    this.load.image('beaker_7ml_4', 'assets/images/popup/beaker_7ml_4.png');
     this.load.image('beaker_7ml_5', 'assets/images/popup/beaker_7ml_5.png');
+    this.load.image('beaker_7ml_6', 'assets/images/popup/beaker_7ml_6.png');
     this.load.image('beaker_7ml_7', 'assets/images/popup/beaker_7ml_7.png');
-    // 12ml 비커 overlay (0, 3, 5, 10, 12)
+    // 12ml 비커 overlay (0~12)
     this.load.image('beaker_12ml_0', 'assets/images/popup/beaker_12ml_0.png');
+    this.load.image('beaker_12ml_1', 'assets/images/popup/beaker_12ml_1.png');
+    this.load.image('beaker_12ml_2', 'assets/images/popup/beaker_12ml_2.png');
     this.load.image('beaker_12ml_3', 'assets/images/popup/beaker_12ml_3.png');
+    this.load.image('beaker_12ml_4', 'assets/images/popup/beaker_12ml_4.png');
     this.load.image('beaker_12ml_5', 'assets/images/popup/beaker_12ml_5.png');
+    this.load.image('beaker_12ml_6', 'assets/images/popup/beaker_12ml_6.png');
+    this.load.image('beaker_12ml_7', 'assets/images/popup/beaker_12ml_7.png');
+    this.load.image('beaker_12ml_8', 'assets/images/popup/beaker_12ml_8.png');
+    this.load.image('beaker_12ml_9', 'assets/images/popup/beaker_12ml_9.png');
     this.load.image('beaker_12ml_10', 'assets/images/popup/beaker_12ml_10.png');
+    this.load.image('beaker_12ml_11', 'assets/images/popup/beaker_12ml_11.png');
     this.load.image('beaker_12ml_12', 'assets/images/popup/beaker_12ml_12.png');
 
     // Kitchen 오버레이 이미지

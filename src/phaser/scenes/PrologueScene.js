@@ -1,6 +1,6 @@
 // src/phaser/scenes/PrologueScene.js
 import BaseScene from './BaseScene';
-import { COLORS, TEXT_STYLES } from '../styles/gameStyles';
+import { COLORS, TEXT_STYLES, CREDITS_SHORT } from '../styles/gameStyles';
 
 export default class PrologueScene extends BaseScene {
   constructor() {
@@ -158,6 +158,7 @@ export default class PrologueScene extends BaseScene {
     if (this.hasCherryBonbon) return;
 
     // 아이템 획득
+    this.playRightSound();
     window.dispatchEvent(new CustomEvent('addItem', {
       detail: {
         id: 'cherrybonbon',
@@ -235,6 +236,7 @@ export default class PrologueScene extends BaseScene {
 
   onDoorClickInPopup(popupScene) {
     if (this.cherryBonbonActivated) {
+      this.playRightSound();
       popupScene.scene.stop('PopupScene');
 
       // 체리봉봉 인벤토리에서 삭제
@@ -246,6 +248,7 @@ export default class PrologueScene extends BaseScene {
       this.fadeToScene('PathScene');
     } else {
       // 팝업 유지하면서 힌트 dialog 표시 (2초 후 자동 닫힘)
+      this.playWrongSound();
       this.showHintDialog('문이 너무 작아...');
     }
   }
@@ -294,7 +297,7 @@ export default class PrologueScene extends BaseScene {
     // 재시작 버튼
     const restartButton = this.add.text(
       width / 2,
-      height / 1.5,
+      height / 1.2,
       '다시 시작하기',
       {
         fontSize: '28px',
@@ -309,17 +312,8 @@ export default class PrologueScene extends BaseScene {
     });
 
     // 엔딩 크레딧
-    const ending = this.add.text(
-      width / 2,
-      height / 1,
-      '만든이: 윤연주 \n 멘탈케어: 이세현 \n 배경음: 이세현 \n 효과음: 이세현 \n 그림: xx',
-      {
-        fontSize: '14px',
-        color: '#000000',
-        fontFamily: 'Arial',
-        alignL: 'center'
-      }
-    ).setOrigin(0.5);
+    this.add.text(width / 2, height / 1.05, CREDITS_SHORT, TEXT_STYLES.ending)
+      .setOrigin(0.5);
   }
 
   // 게임 재시작

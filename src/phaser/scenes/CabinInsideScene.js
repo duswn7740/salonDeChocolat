@@ -591,6 +591,7 @@ export default class CabinInsideScene extends BaseScene {
   }
 
   addItem(item) {
+    this.playRightSound();
     window.dispatchEvent(new CustomEvent('addItem', { detail: item }));
   }
 

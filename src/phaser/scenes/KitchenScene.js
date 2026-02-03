@@ -621,28 +621,25 @@ export default class KitchenScene extends BaseScene {
       8: { x: width / 2, y: height / 1.5 }
     };
 
-    // 무게추 아이템 사용한 경우 무게추 표시
-    if (this.worktableState.weightAdded) {
-      // 저울 위 무게추 표시
-      this.worktableState.weightsOnScale.forEach((w, idx) => {
-        items.push({
-          key: `weight_${w}g_overlay`,
-          x: scaleWeightPositions[w]?.x || (width / 4 + idx * 50),
-          y: scaleWeightPositions[w]?.y || height / 1.5,
-          scale: 0.2
-        });
+    // 저울 위 무게추 표시
+    this.worktableState.weightsOnScale.forEach((w, idx) => {
+      items.push({
+        key: `weight_${w}g_overlay`,
+        x: scaleWeightPositions[w]?.x || (width / 4 + idx * 50),
+        y: scaleWeightPositions[w]?.y || height / 1.5,
+        scale: 0.2
       });
+    });
 
-      // 책상 위 무게추 표시
-      this.worktableState.weightsOnTable.forEach((w, idx) => {
-        items.push({
-          key: `weight_${w}g_overlay`,
-          x: tableWeightPositions[w]?.x || (width / 4 + idx * 50),
-          y: tableWeightPositions[w]?.y || height / 2.5,
-          scale: 0.2
-        });
+    // 책상 위 무게추 표시
+    this.worktableState.weightsOnTable.forEach((w, idx) => {
+      items.push({
+        key: `weight_${w}g_overlay`,
+        x: tableWeightPositions[w]?.x || (width / 4 + idx * 50),
+        y: tableWeightPositions[w]?.y || height / 2.5,
+        scale: 0.2
       });
-    }
+    });
 
     // 초콜릿 표시
     if (this.worktableState.chocolateOnScale) {
@@ -661,54 +658,51 @@ export default class KitchenScene extends BaseScene {
     const { width, height } = this.cameras.main;
     const clickAreas = [];
 
-    // 무게추 아이템 사용한 경우 무게추 이동 가능
-    if (this.worktableState.weightAdded) {
-      // 저울 위 무게추 위치 (클릭하면 책상으로 이동) - 화면 위쪽
-      const scaleWeightPositions = {
-        3: { x: width / 4, y: height / 2.5 },
-        5: { x: width / 3, y: height / 2.5 },
-        6: { x: width / 2.5, y: height / 2.5 },
-        8: { x: width / 2, y: height / 2.5 }
-      };
+    // 저울 위 무게추 위치 (클릭하면 책상으로 이동) - 화면 위쪽
+    const scaleWeightPositions = {
+      3: { x: width / 4, y: height / 2.5 },
+      5: { x: width / 3, y: height / 2.5 },
+      6: { x: width / 2.5, y: height / 2.5 },
+      8: { x: width / 2, y: height / 2.5 }
+    };
 
-      // 저울 위 무게추 클릭 영역 (클릭하면 책상으로 이동)
-      this.worktableState.weightsOnScale.forEach((w) => {
-        const pos = scaleWeightPositions[w];
-        if (pos) {
-          clickAreas.push({
-            x: pos.x,
-            y: pos.y,
-            width: 60,
-            height: 60,
-            debugAlpha: 0.3,
-            callback: () => this.moveWeightToTable(w)
-          });
-        }
-      });
+    // 저울 위 무게추 클릭 영역 (클릭하면 책상으로 이동)
+    this.worktableState.weightsOnScale.forEach((w) => {
+      const pos = scaleWeightPositions[w];
+      if (pos) {
+        clickAreas.push({
+          x: pos.x,
+          y: pos.y,
+          width: 60,
+          height: 60,
+          debugAlpha: 0.3,
+          callback: () => this.moveWeightToTable(w)
+        });
+      }
+    });
 
-      // 책상 위 무게추 위치 (클릭하면 저울로 이동) - 화면 아래쪽
-      const tableWeightPositions = {
-        3: { x: width / 4, y: height / 1.5 },
-        5: { x: width / 3, y: height / 1.5 },
-        6: { x: width / 2.5, y: height / 1.5 },
-        8: { x: width / 2, y: height / 1.5 }
-      };
+    // 책상 위 무게추 위치 (클릭하면 저울로 이동) - 화면 아래쪽
+    const tableWeightPositions = {
+      3: { x: width / 4, y: height / 1.5 },
+      5: { x: width / 3, y: height / 1.5 },
+      6: { x: width / 2.5, y: height / 1.5 },
+      8: { x: width / 2, y: height / 1.5 }
+    };
 
-      // 책상 위 무게추 클릭 영역 (클릭하면 저울로 이동)
-      this.worktableState.weightsOnTable.forEach((w) => {
-        const pos = tableWeightPositions[w];
-        if (pos) {
-          clickAreas.push({
-            x: pos.x,
-            y: pos.y,
-            width: 60,
-            height: 60,
-            debugAlpha: 0.3,
-            callback: () => this.moveWeightToScale(w)
-          });
-        }
-      });
-    }
+    // 책상 위 무게추 클릭 영역 (클릭하면 저울로 이동)
+    this.worktableState.weightsOnTable.forEach((w) => {
+      const pos = tableWeightPositions[w];
+      if (pos) {
+        clickAreas.push({
+          x: pos.x,
+          y: pos.y,
+          width: 60,
+          height: 60,
+          debugAlpha: 0.3,
+          callback: () => this.moveWeightToScale(w)
+        });
+      }
+    });
 
     // 저울 빈 공간: weight/chocolate 아이템 추가
     clickAreas.push({
@@ -951,22 +945,26 @@ export default class KitchenScene extends BaseScene {
     const { b5, b7, b12 } = this.worktableState.beakerState;
     const items = [];
 
-    // fresh_cream (무제한) - 항상 표시
-    items.push({ key: `fresh_cream_overlay`, x: width / 4, y: height / 2 });
+    // 선택된 비커는 10px 위로 띄움
+    const selectedOffset = 10;
 
-    // 5ml, 7ml, 12ml 비커 순서대로 배치
-    items.push({ key: `beaker_5ml_${this.getClosestBeakerValue(b5, [0, 3, 5])}`, x: width / 3, y: height / 2 });
-    items.push({ key: `beaker_7ml_${this.getClosestBeakerValue(b7, [0, 2, 3, 5, 7])}`, x: width / 2, y: height / 2 });
-    items.push({ key: `beaker_12ml_${this.getClosestBeakerValue(b12, [0, 3, 5, 10, 12])}`, x: width / 1.5, y: height / 2 });
+    // fresh_cream (무제한) - 항상 표시
+    const creamY = this.selectedBeaker === 'cream' ? height / 2 - selectedOffset : height / 2;
+    items.push({ key: `fresh_cream_overlay`, x: width / 4, y: creamY });
+
+    // 5ml 비커 (정확한 값 사용)
+    const b5Y = this.selectedBeaker === 'b5' ? height / 2 - selectedOffset : height / 2;
+    items.push({ key: `beaker_5ml_${b5}`, x: width / 3, y: b5Y });
+
+    // 7ml 비커 (정확한 값 사용)
+    const b7Y = this.selectedBeaker === 'b7' ? height / 2 - selectedOffset : height / 2;
+    items.push({ key: `beaker_7ml_${b7}`, x: width / 2, y: b7Y });
+
+    // 12ml 비커 (정확한 값 사용)
+    const b12Y = this.selectedBeaker === 'b12' ? height / 2 - selectedOffset : height / 2;
+    items.push({ key: `beaker_12ml_${b12}`, x: width / 1.5, y: b12Y });
 
     return items;
-  }
-
-  // 가장 가까운 비커 이미지 값 반환
-  getClosestBeakerValue(value, available) {
-    return available.reduce((prev, curr) =>
-      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev
-    );
   }
 
   // 비커 클릭 영역 (fresh_cream(무제한), 5ml, 7ml, 12ml, 하수구, 측정완료 버튼)
@@ -1039,11 +1037,16 @@ export default class KitchenScene extends BaseScene {
       // 이미 비커가 선택되어 있으면 -> 생크림으로 옮기려는 것 (불가)
       this.showHintDialog('생크림으로는 옮길 수 없어...');
       this.selectedBeaker = null;
+      // 팝업 갱신 (선택 해제 표시)
+      this.scene.stop('PopupScene');
+      this.showBeakerPuzzlePopup();
       return;
     }
     // 생크림 선택 -> 다음에 클릭하는 비커를 가득 채움
     this.selectedBeaker = 'cream';
-    this.showHintDialog('비커를 선택해서 채워...');
+    // 팝업 갱신 (선택 표시)
+    this.scene.stop('PopupScene');
+    this.showBeakerPuzzlePopup();
   }
 
   // 비커 선택 (선택 후 다른 비커 클릭하면 옮기기)
@@ -1051,18 +1054,24 @@ export default class KitchenScene extends BaseScene {
     if (!this.selectedBeaker) {
       // 첫 번째 선택
       this.selectedBeaker = beakerKey;
-      this.showHintDialog('다른 비커나 하수구를 선택...');
+      // 팝업 갱신 (선택 표시)
+      this.scene.stop('PopupScene');
+      this.showBeakerPuzzlePopup();
     } else if (this.selectedBeaker === 'cream') {
       // 생크림이 선택된 상태 -> 비커를 가득 채움
-      this.fillBeakerFromCream(beakerKey);
       this.selectedBeaker = null;
+      this.fillBeakerFromCream(beakerKey);
     } else if (this.selectedBeaker === beakerKey) {
       // 같은 비커 다시 클릭 -> 선택 해제
       this.selectedBeaker = null;
+      // 팝업 갱신 (선택 해제 표시)
+      this.scene.stop('PopupScene');
+      this.showBeakerPuzzlePopup();
     } else {
       // 다른 비커로 옮기기
-      this.pourBeaker(this.selectedBeaker, beakerKey);
+      const fromBeaker = this.selectedBeaker;
       this.selectedBeaker = null;
+      this.pourBeaker(fromBeaker, beakerKey);
     }
   }
 
@@ -1179,6 +1188,7 @@ export default class KitchenScene extends BaseScene {
   }
 
   addItem(item) {
+    this.playRightSound();
     window.dispatchEvent(new CustomEvent('addItem', { detail: item }));
   }
 

@@ -29,6 +29,9 @@ export default class BaseScene extends Phaser.Scene {
    * 배경음악 시작 (전역 관리)
    */
   startBGM() {
+    // 사운드 설정 확인
+    if (window.soundSettings && !window.soundSettings.bgm) return;
+
     // 이미 재생 중인 BGM이 있으면 무시
     if (this.game.registry.get('bgmPlaying')) return;
 
@@ -48,12 +51,43 @@ export default class BaseScene extends Phaser.Scene {
       bgm.play();
     }
     this.game.registry.set('bgmPlaying', true);
+
+    // BGM 토글 이벤트 리스닝
+    this.setupBGMToggleListener();
+  }
+
+  /**
+   * BGM 토글 이벤트 리스너 설정
+   */
+  setupBGMToggleListener() {
+    // 이미 리스너가 설정되어 있으면 무시
+    if (this.game.registry.get('bgmListenerSet')) return;
+
+    window.addEventListener('bgmToggle', (event) => {
+      const { enabled } = event.detail;
+      const bgm = this.sound.get('bgm');
+
+      if (bgm) {
+        if (enabled) {
+          if (!bgm.isPlaying) {
+            bgm.play();
+          }
+        } else {
+          bgm.stop();
+        }
+      }
+      this.game.registry.set('bgmPlaying', enabled);
+    });
+
+    this.game.registry.set('bgmListenerSet', true);
   }
 
   /**
    * 정답 효과음 재생
    */
   playRightSound() {
+    // 효과음 설정 확인
+    if (window.soundSettings && !window.soundSettings.sfx) return;
     this.sound.play('right', { volume: 0.5 });
   }
 
@@ -61,6 +95,8 @@ export default class BaseScene extends Phaser.Scene {
    * 오답 효과음 재생
    */
   playWrongSound() {
+    // 효과음 설정 확인
+    if (window.soundSettings && !window.soundSettings.sfx) return;
     this.sound.play('wrong', { volume: 0.5 });
   }
 

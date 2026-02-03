@@ -267,17 +267,32 @@ export default class PathScene extends BaseScene {
       popupImage: 'stump_before',
       popupImageAfter: 'stump_after',
       popupSize: { width: 500, height: 500 },
-      clickAreas: [{
-        x: width / 2,
-        y: height / 2.3,
-        width: 150,
-        height: 150,
-        debugColor: 0x0000ff,
-        debugAlpha: 0,
-        callback: (popupScene) => {
-          this.onPopupItemClick(popupScene, 'stump');
+      clickAreas: [
+        // 나뭇가지 클릭 영역
+        {
+          x: width / 2,
+          y: height / 2.3,
+          width: 150,
+          height: 150,
+          debugColor: 0x0000ff,
+          debugAlpha: 0,
+          callback: (popupScene) => {
+            this.onPopupItemClick(popupScene, 'stump');
+          }
+        },
+        // 스텀프 머리 부분 클릭 영역 (힌트용)
+        {
+          x: width / 3.2,
+          y: height / 2.2,
+          width: 200,
+          height: 100,
+          debugColor: 0x00ff00,
+          debugAlpha: 0,
+          callback: () => {
+            this.showHintDialog('여기서 뭔가 자를 수 있을 것 같아...');
+          }
         }
-      }]
+      ]
     };
   }
 
@@ -374,6 +389,7 @@ export default class PathScene extends BaseScene {
 
     // 아이템 인벤토리에 추가
     if (item.id) {
+      this.playRightSound();
       window.dispatchEvent(new CustomEvent('addItem', {
         detail: item
       }));

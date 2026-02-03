@@ -496,6 +496,7 @@ export default class RiversideScene extends BaseScene {
   }
 
   addItem(item) {
+    this.playRightSound();
     window.dispatchEvent(new CustomEvent('addItem', { detail: item }));
   }
 
